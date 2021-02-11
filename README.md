@@ -49,41 +49,41 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 # COCO Evaluation
 
 ### GFocalV1 with LD
-| Teacher | Student | Training schedule | box AP (val)| box AP75 (val)| box AP (test-dev)| box AP75 (test-dev)| box AR100 (test-dev)|
+| Teacher | Student | Training schedule | AP (val)| AP75 (val)| AP (test-dev)| AP75 (test-dev)| AR100 (test-dev)|
 |:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
-|      | R-18 | 1x |  35.8  |  38.2  |  36.0  |  38.7  |  55.3  |
+|   --   | R-18 | 1x |  35.8  |  38.2  |  36.0  |  38.7  |  55.3  |
 | R-101 | R-18 | 1x |  36.5  |  39.3  |  36.8  |  39.9  |  56.6  |
-|      | R-34 | 1x |  38.9  |  42.2  |  39.2  |  42.3  |  58.0  |
+|   --  | R-34 | 1x |  38.9  |  42.2  |  39.2  |  42.3  |  58.0  |
 | R-101 | R-34 | 1x |  39.8  |  43.1  |  40.0  |  43.5  |  59.3  |
-|      | R-50 | 1x |  40.1  |  43.1  |  40.5  |  43.9  |  59.0  |
+|   --   | R-50 | 1x |  40.1  |  43.1  |  40.5  |  43.9  |  59.0  |
 | R-101 | R-50 | 1x |  41.1  |  44.9  |  41.2  |  44.7  |  59.8  |
-|      | R-101 | 2x |  44.6  |  48.4  |  45.0  |  48.9  |  62.3  |
+|   --   | R-101 | 2x |  44.6  |  48.4  |  45.0  |  48.9  |  62.3  |
 | R-101-DCN | R-101 | 2x |  45.4  |  49.5  |  45.6  |  49.8  |  63.3  |
 
 ### GFocalV1 with Self-LD
 
-| Teacher | Student | Training schedule | box AP (val)| box AP75 (val)|
+| Teacher | Student | Training schedule | AP (val)| AP75 (val)|
 |:----:|:-------:|:-------:|:----:|:----:|
-|      | R-18 | 1x |  35.8  |  38.2  |
+|  --    | R-18 | 1x |  35.8  |  38.2  |
 | R-18  | R-18 | 1x |  36.1  |  38.5  |
-|      | R-50 | 1x |  40.1  |  43.1  |
+|  --    | R-50 | 1x |  40.1  |  43.1  |
 | R-50  | R-50 | 1x |  40.6  |  43.8  |
-|      | X-101-32x4d-DCN | 2x |  46.9  |  51.1  |
+|  --    | X-101-32x4d-DCN | 2x |  46.9  |  51.1  |
 | X-101-32x4d-DCN | X-101-32x4d-DCN | 2x |  47.5 |  51.8  |
 
 ### GFocalV2 with LD
 
-| Teacher | Student | Training schedule | box AP (test-dev)| box AP75 (test-dev)| box AR100 (test-dev)|
+| Teacher | Student | Training schedule | AP (test-dev)| AP75 (test-dev)| AR100 (test-dev)|
 |:----:|:-------:|:-------:|:----:|:----:|:----:|
-|      | R-50 | 2x |  44.4  |  48.5  |  62.4  |
+|  --    | R-50 | 2x |  44.4  |  48.5  |  62.4  |
 | R-101 | R-50 | 2x |  44.8  |  49.0  |  63.1  |
-|      | R-101 | 2x |  46.0  |  50.2  |  63.5  |
+|  --    | R-101 | 2x |  46.0  |  50.2  |  63.5  |
 | R-101-DCN| R-101 | 2x |  46.8  |  51.1  |  64.3  |
-|      | R-101-DCN | 2x |  48.2  |  52.6  |  64.4  |
+|  --    | R-101-DCN | 2x |  48.2  |  52.6  |  64.4  |
 | R2-101-DCN| R-101-DCN | 2x |  49.1  |  53.7  |  65.6  |
-|      | X-101-32x4d-DCN | 2x |  49.0  |  53.4  |  64.7  |
+|  --    | X-101-32x4d-DCN | 2x |  49.0  |  53.4  |  64.7  |
 | R2-101-DCN| X-101-32x4d-DCN | 2x |  50.2  |  54.9  |  66.3  |
-|      | R2-101-DCN | 2x |  50.5  |  55.1  |  66.2  |
+|  --    | R2-101-DCN | 2x |  50.5  |  55.1  |  66.2  |
 | R2-101-DCN| R2-101-DCN | 2x |  51.0  |  55.9  |  66.8  |
 
 [0] *The reported numbers here are from new experimental trials (in the cleaned repo), which may be slightly different from the original paper.* \
