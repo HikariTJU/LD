@@ -1,150 +1,107 @@
-<div align="center">
-  <img src="resources/mmdet-logo.png" width="600"/>
-</div>
+# Localization Distillation for Object Detection 
 
-**News**: We released the technical report on [ArXiv](https://arxiv.org/abs/1906.07155).
+### This repo is based on MMDetection.
 
-Documentation: https://mmdetection.readthedocs.io/
+This is the code for our papers:
+ - [Localization Distillation for Object Detection ](https://arxiv.org/abs/1911.08287)[LD](https://arxiv.org/pdf/2011.12885.pdf)
+
+LD is a kind of kownledge distillation strategy which utilizes the learned bounding box distributions to transfer the localization knowledge from teacher to student.
+
+LD stably improves over GFocalV1 about ~0.8 AP and ~1 AR100 without any computational cost! 
 
 ## Introduction
 
-MMDetection is an open source object detection toolbox based on PyTorch. It is
-a part of the OpenMMLab project developed by [Multimedia Laboratory, CUHK](http://mmlab.ie.cuhk.edu.hk/).
+Knowledge distillation (KD) has witnessed its powerful ability in learning compact and efficient models in several deep learning fields, but it is still limited in distilling localization information for object detection. Existing KD methods for object detection mainly focus on mimicking deep features between teacher model and student model, which not only is restricted by specific model architectures, but also cannot distill localization ambiguity. KD for object detection two issues: (i) how to distill localization information for arbitrary detector architecture, (ii) how to choose effective teacher model for distillation. In this paper, we first propose localization distillation (LD) for object detection. In particular, our LD can be formulated as standard KD by adopting the general localization representation of bounding box. Our LD is very simple and flexible, and is applicable to distill localization ambiguity for arbitrary architecture of teacher model and student model. Moreover, it is interesting to find that Self-LD, i.e., distilling teacher model itself, can further boost state-of-the-art performance. Second, we suggest a teacher assistant (TA) strategy to fill the possible gap between teacher model and student model, by which the distillation effectiveness can be guaranteed even the selected teacher model is not optimal. On benchmark datasets PASCAL VOC and MS COCO, our LD can consistently improve the performance for student models, and also boosts state-of-the-art detectors notably.
 
-The master branch works with **PyTorch 1.3 to 1.6**.
-The old v1.x branch works with PyTorch 1.1 to 1.4, but v2.0 is strongly recommended for faster speed, higher performance, better design and more friendly usage.
+<img src="https://github.com/implus/GFocalV2/blob/master/LD.png" width="541" height="365" align="middle"/>
 
-![demo image](resources/coco_test_12510.jpg)
-
-### Major features
-
-- **Modular Design**
-
-  We decompose the detection framework into different components and one can easily construct a customized object detection framework by combining different modules.
-
-- **Support of multiple frameworks out of box**
-
-  The toolbox directly supports popular and contemporary detection frameworks, *e.g.* Faster RCNN, Mask RCNN, RetinaNet, etc.
-
-- **High efficiency**
-
-  All basic bbox and mask operations run on GPUs. The training speed is faster than or comparable to other codebases, including [Detectron2](https://github.com/facebookresearch/detectron2), [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark) and [SimpleDet](https://github.com/TuSimple/simpledet).
-
-- **State of the art**
-
-  The toolbox stems from the codebase developed by the *MMDet* team, who won [COCO Detection Challenge](http://cocodataset.org/#detection-leaderboard) in 2018, and we keep pushing it forward.
-
-Apart from MMDetection, we also released a library [mmcv](https://github.com/open-mmlab/mmcv) for computer vision research, which is heavily depended on by this toolbox.
-
-## License
-
-This project is released under the [Apache 2.0 license](LICENSE).
-
-## Changelog
-
-v2.4.0 was released in 5/9/2020.
-Please refer to [changelog.md](docs/changelog.md) for details and release history.
-A comparison between v1.x and v2.0 codebases can be found in [compatibility.md](docs/compatibility.md).
-
-## Benchmark and model zoo
-
-Results and models are available in the [model zoo](docs/model_zoo.md).
-
-Supported backbones:
-- [x] ResNet
-- [x] ResNeXt
-- [x] VGG
-- [x] HRNet
-- [x] RegNet
-- [x] Res2Net
-
-Supported methods:
-- [x] [RPN](configs/rpn)
-- [x] [Fast R-CNN](configs/fast_rcnn)
-- [x] [Faster R-CNN](configs/faster_rcnn)
-- [x] [Mask R-CNN](configs/mask_rcnn)
-- [x] [Cascade R-CNN](configs/cascade_rcnn)
-- [x] [Cascade Mask R-CNN](configs/cascade_rcnn)
-- [x] [SSD](configs/ssd)
-- [x] [RetinaNet](configs/retinanet)
-- [x] [GHM](configs/ghm)
-- [x] [Mask Scoring R-CNN](configs/ms_rcnn)
-- [x] [Double-Head R-CNN](configs/double_heads)
-- [x] [Hybrid Task Cascade](configs/htc)
-- [x] [Libra R-CNN](configs/libra_rcnn)
-- [x] [Guided Anchoring](configs/guided_anchoring)
-- [x] [FCOS](configs/fcos)
-- [x] [RepPoints](configs/reppoints)
-- [x] [Foveabox](configs/foveabox)
-- [x] [FreeAnchor](configs/free_anchor)
-- [x] [NAS-FPN](configs/nas_fpn)
-- [x] [ATSS](configs/atss)
-- [x] [FSAF](configs/fsaf)
-- [x] [PAFPN](configs/pafpn)
-- [x] [Dynamic R-CNN](configs/dynamic_rcnn)
-- [x] [PointRend](configs/point_rend)
-- [x] [CARAFE](configs/carafe/README.md)
-- [x] [DCNv2](configs/dcn/README.md)
-- [x] [Group Normalization](configs/gn/README.md)
-- [x] [Weight Standardization](configs/gn+ws/README.md)
-- [x] [OHEM](configs/faster_rcnn/faster_rcnn_r50_fpn_ohem_1x_coco.py)
-- [x] [Soft-NMS](configs/faster_rcnn/faster_rcnn_r50_fpn_soft_nms_1x_coco.py)
-- [x] [Generalized Attention](configs/empirical_attention/README.md)
-- [x] [GCNet](configs/gcnet/README.md)
-- [x] [Mixed Precision (FP16) Training](configs/fp16/README.md)
-- [x] [InstaBoost](configs/instaboost/README.md)
-- [x] [GRoIE](configs/groie/README.md)
-- [x] [DetectoRS](configs/detectors/README.md)
-- [x] [Generalized Focal Loss](configs/gfl/README.md)
-- [x] [CornerNet](configs/cornernet/README.md)
-- [x] [Side-Aware Boundary Localization](configs/sabl/README.md)
-- [x] [YOLOv3](configs/yolo/README.md)
-- [x] [PAA](configs/paa/README.md)
-- [x] [YOLACT](configs/yolact/README.md)
-- [x] [CentripetalNet](configs/centripetalnet/README.md)
-
-Some other methods are also supported in [projects using MMDetection](./docs/projects.md).
 
 ## Installation
 
-Please refer to [install.md](docs/install.md) for installation and dataset preparation.
+Please refer to [INSTALL.md](docs/INSTALL.md) for installation and dataset preparation.
 
-## Getting Started
+## Get Started
 
-Please see [getting_started.md](docs/getting_started.md) for the basic usage of MMDetection.
-We provide [colab tutorial](demo/MMDet_Tutorial.ipynb) for beginners.
-There are also tutorials for [finetuning models](docs/tutorials/finetune.md), [adding new dataset](docs/tutorials/new_dataset.md), [designing data pipeline](docs/tutorials/data_pipeline.md), [customizing models](docs/tutorials/customize_models.md), and [customizing runtime settings](docs/tutorials/customize_runtime.md).
+Please see [GETTING_STARTED.md](docs/GETTING_STARTED.md) for the basic usage of MMDetection.
 
-For trouble shooting, please refer to [trouble_shooting.md](docs/trouble_shooting.md)
+## Train
 
-## Contributing
+```python
+# assume that you are under the root directory of this project,
+# and you have activated your virtual environment if needed.
+# and with COCO dataset in 'data/coco/'
 
-We appreciate all contributions to improve MMDetection. Please refer to [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the contributing guideline.
+./tools/dist_train.sh configs/ld/ld_r101_r50_fpn_ms2x.py 8
+```
 
-## Acknowledgement
+## Inference
 
-MMDetection is an open source project that is contributed by researchers and engineers from various colleges and companies. We appreciate all the contributors who implement their methods or add new features, as well as users who give valuable feedbacks.
-We wish that the toolbox and benchmark could serve the growing research community by providing a flexible toolkit to reimplement existing methods and develop their own new detectors.
+```python
+./tools/dist_test.sh configs/ld/ld_r101_r50_fpn_ms2x.py work_dirs/ld_r101_r50_fpn_ms2x/epoch_24.pth 8 --eval bbox
+```
+
+## Speed Test (FPS)
+
+```python
+CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_ms2x.py work_dirs/ld_r101_r50_fpn_ms2x/epoch_24.pth
+```
+
+# COCO Evaluation
+
+### GFocalV1 with LD
+| Teacher | Student | Training schedule | box AP (val)| box AP75 (val)| box AP (test-dev)| box AP75 (test-dev)| box AR100 (test-dev)|
+|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
+|      | R-18 | 1x |  35.8  |  38.2  |  36.0  |  38.7  |  55.3  |
+| R-101 | R-18 | 1x |  36.5  |  39.3  |  36.8  |  39.9  |  56.6  |
+|      | R-34 | 1x |  38.9  |  42.2  |  39.2  |  42.3  |  58.0  |
+| R-101 | R-34 | 1x |  39.8  |  43.1  |  40.0  |  43.5  |  59.3  |
+|      | R-50 | 1x |  40.1  |  43.1  |  40.5  |  43.9  |  59.0  |
+| R-101 | R-50 | 1x |  41.1  |  44.9  |  41.2  |  44.7  |  59.8  |
+|      | R-101 | 2x |  44.6  |  48.4  |  45.0  |  48.9  |  62.3  |
+| R-101-DCN | R-101 | 2x |  45.4  |  49.5  |  45.6  |  49.8  |  63.3  |
+
+### GFocalV1 with Self-LD
+
+| Teacher | Student | Training schedule | box AP (val)| box AP75 (val)|
+|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
+|      | R-18 | 1x |  35.8  |  38.2  |
+| R-18  | R-18 | 1x |  36.1  |  38.5  |
+|      | R-50 | 1x |  40.1  |  43.1  |
+| R-50  | R-50 | 1x |  40.6  |  43.8  |
+|      | X-101-32x4d-DCN | 2x |  46.9  |  51.1  |
+| X-101-32x4d-DCN | X-101-32x4d-DCN | 2x |  47.5 |  51.8  |
+
+### GFocalV2 with LD
+
+| Teacher | Student | Training schedule | box AP (test-dev)| box AP75 (test-dev)| box AR100 (test-dev)|
+|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
+|      | R-50 | 2x |  44.4  |  48.5  |  62.4  |
+| R-101 | R-50 | 2x |  44.8  |  49.0  |  63.1  |
+|      | R-101 | 2x |  46.0  |  50.2  |  63.5  |
+| R-101-DCN| R-101 | 2x |  46.8  |  51.1  |  64.3  |
+|      | R-101-DCN | 2x |  48.2  |  52.6  |  64.4  |
+| R2-101-DCN| R-101-DCN | 2x |  49.1  |  53.7  |  65.6  |
+|      | X-101-32x4d-DCN | 2x |  49.0  |  53.4  |  64.7  |
+| R2-101-DCN| X-101-32x4d-DCN | 2x |  50.2  |  54.9  |  66.3  |
+|      | R2-101-DCN | 2x |  50.5  |  55.1  |  66.2  |
+| R2-101-DCN| R2-101-DCN | 2x |  51.0  |  55.9  |  66.8  |
+
+[0] *The reported numbers here are from new experimental trials (in the cleaned repo), which may be slightly different from the original paper.* \
+[1] *Note that the 1x performance may be slightly unstable due to insufficient training. In practice, the 2x results are considerably stable between multiple runs.* \
+[2] *All results are obtained with a single model and without any test time data augmentation such as multi-scale, flipping and etc..* \
+[3] *`dcnv2` denotes deformable convolutional networks v2. Note that for ResNe(X)t based models, we apply deformable convolutions from stage c3 to c5 in backbones.* \
+[4] *Refer to more details in config files in `config/gfocal/`.* \
+[5] *FPS is tested with a single GeForce RTX 2080Ti GPU, using a batch size of 1.* 
 
 ## Citation
 
-If you use this toolbox or benchmark in your research, please cite this project.
+If you find GFocal useful in your research, please consider citing:
 
 ```
-@article{mmdetection,
-  title   = {{MMDetection}: Open MMLab Detection Toolbox and Benchmark},
-  author  = {Chen, Kai and Wang, Jiaqi and Pang, Jiangmiao and Cao, Yuhang and
-             Xiong, Yu and Li, Xiaoxiao and Sun, Shuyang and Feng, Wansen and
-             Liu, Ziwei and Xu, Jiarui and Zhang, Zheng and Cheng, Dazhi and
-             Zhu, Chenchen and Cheng, Tianheng and Zhao, Qijie and Li, Buyu and
-             Lu, Xin and Zhu, Rui and Wu, Yue and Dai, Jifeng and Wang, Jingdong
-             and Shi, Jianping and Ouyang, Wanli and Loy, Chen Change and Lin, Dahua},
-  journal= {arXiv preprint arXiv:1906.07155},
-  year={2019}
+@inproceedings{li2020generalized,
+    title={Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection},
+    author={Li, Xiang and Wang, Wenhai and Wu, Lijun and Chen, Shuo and Hu, Xiaolin and Li, Jun and Tang, Jinhui and Yang, Jian},
+    booktitle={NeurIPS},
+    year={2020}
 }
 ```
-
-## Contact
-
-This repo is currently maintained by Kai Chen ([@hellock](http://github.com/hellock)), Yuhang Cao ([@yhcao6](https://github.com/yhcao6)), Wenwei Zhang ([@ZwwWayne](https://github.com/ZwwWayne)),
-Jiarui Xu ([@xvjiarui](https://github.com/xvjiarui)). Other core developers include Jiangmiao Pang ([@OceanPang](https://github.com/OceanPang)) and Jiaqi Wang ([@myownskyW7](https://github.com/myownskyW7)).
