@@ -7,7 +7,7 @@ This is the code for our papers:
 
 LD is a kind of kownledge distillation strategy which utilizes the learned bounding box distributions to transfer the localization knowledge from teacher to student.
 
-LD stably improves over GFocalV1 about ~0.8 AP and ~1 AR100 without any computational cost! 
+LD stably improves over GFocalV1 about ~0.8 AP and ~1 AR100 without adding any computational cost! 
 
 ## Introduction
 
