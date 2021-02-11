@@ -63,7 +63,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 ### GFocalV1 with Self-LD
 
 | Teacher | Student | Training schedule | box AP (val)| box AP75 (val)|
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
+|:----:|:-------:|:-------:|:----:|:----:|
 |      | R-18 | 1x |  35.8  |  38.2  |
 | R-18  | R-18 | 1x |  36.1  |  38.5  |
 |      | R-50 | 1x |  40.1  |  43.1  |
@@ -74,7 +74,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 ### GFocalV2 with LD
 
 | Teacher | Student | Training schedule | box AP (test-dev)| box AP75 (test-dev)| box AR100 (test-dev)|
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
+|:----:|:-------:|:-------:|:----:|:----:|:----:|
 |      | R-50 | 2x |  44.4  |  48.5  |  62.4  |
 | R-101 | R-50 | 2x |  44.8  |  49.0  |  63.1  |
 |      | R-101 | 2x |  46.0  |  50.2  |  63.5  |
