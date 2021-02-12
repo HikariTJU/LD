@@ -30,7 +30,7 @@ model = dict(
         feat_channels=256,
         teacher_config=['configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py'],
         teacher_model=[
-            'r101dconv_r101_45.4.pth'
+            'R101_N64_44.8.pth'
         ],
         anchor_generator=dict(
             type='AnchorGenerator',
@@ -45,7 +45,7 @@ model = dict(
             loss_weight=1.0),
         loss_dfl=dict(type='KDDistributionFocalLoss',
                       loss_weight=0.25, T=10, alpha=1),
-        reg_max=16,
+        reg_max=64,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 custom_hooks = [
     dict(type='EpochHook')

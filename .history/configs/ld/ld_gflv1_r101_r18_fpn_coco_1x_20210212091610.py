@@ -32,8 +32,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=3,
-    workers_per_gpu=3,
+    samples_per_gpu=8,
+    workers_per_gpu=8,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_train2017.json',
@@ -76,9 +76,8 @@ model = dict(
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
-        teacher_model=['gfl_r34_39.3.pth', 'gfl_r34_38.8.pth'],
-        teacher_config=['configs/gfl/gfl_r34_fpn_1x_coco.py',
-                        'configs/gfl/gfl_r34_fpn_1x_coco.py'],
+        teacher_config='configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py',
+        teacher_model='gfl_r101_fpn_mstrain_2x_coco_20200629_200126-dd12f847.pth',
         anchor_generator=dict(
             type='AnchorGenerator',
             ratios=[1.0],
@@ -95,7 +94,6 @@ model = dict(
         reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 # training and testing settings
-custom_hooks = [dict(type='EpochHook', priority='HIGHEST')]
 train_cfg = dict(
     assigner=dict(type='ATSSAssigner', topk=9),
     allowed_border=-1,
@@ -108,4 +106,4 @@ test_cfg = dict(
     nms=dict(type='nms', iou_threshold=0.6),
     max_per_img=100)
 # optimizer
-optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)

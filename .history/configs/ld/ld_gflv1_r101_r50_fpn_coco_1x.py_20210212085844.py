@@ -28,8 +28,10 @@ model = dict(
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
-        teacher_model='gfl_r50_fpn_mstrain_2x_coco_20200629_213802-37bb1edc.pth',
-        teacher_config='configs/gfl/gfl_r50_fpn_mstrain_2x_coco.py',
+        teacher_config=['configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py'],
+        teacher_model=[
+            'R101_N64_44.8.pth'
+        ],
         anchor_generator=dict(
             type='AnchorGenerator',
             ratios=[1.0],
@@ -42,10 +44,14 @@ model = dict(
             beta=2.0,
             loss_weight=1.0),
         loss_dfl=dict(type='KDDistributionFocalLoss',
-                      loss_weight=0.25, T=10, alpha=1),
-        reg_max=16,
+                      loss_weight=0.25, T=10, alpha=3),
+        reg_max=64,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
+custom_hooks = [
+    dict(type='EpochHook')
+]
 # training and testing settings
+
 train_cfg = dict(
     assigner=dict(type='ATSSAssigner', topk=9),
     allowed_border=-1,
@@ -58,7 +64,8 @@ test_cfg = dict(
     nms=dict(type='nms', iou_threshold=0.6),
     max_per_img=100)
 # optimizer
-optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.00375,
+                 momentum=0.9, weight_decay=0.0001)
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
 img_norm_cfg = dict(

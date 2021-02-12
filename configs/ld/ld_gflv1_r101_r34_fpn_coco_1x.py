@@ -33,7 +33,7 @@ test_pipeline = [
 ]
 data = dict(
     samples_per_gpu=3,
-    workers_per_gpu=3,
+    workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_train2017.json',
@@ -53,10 +53,10 @@ evaluation = dict(interval=1, metric='bbox')
 
 model = dict(
     type='GFL',
-    pretrained='torchvision://resnet18',
+    pretrained='torchvision://resnet34',
     backbone=dict(
         type='ResNet',
-        depth=18,
+        depth=34,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
         frozen_stages=1,
@@ -76,8 +76,8 @@ model = dict(
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
-        teacher_model='ta_r101_34_39.9.pth',
-        teacher_config='configs/gfl/gfl_r34_fpn_1x_coco.py',
+        teacher_config='configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py',
+        teacher_model='gfl_r101_fpn_mstrain_2x_coco_20200629_200126-dd12f847.pth',
         anchor_generator=dict(
             type='AnchorGenerator',
             ratios=[1.0],
