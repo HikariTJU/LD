@@ -32,8 +32,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=8,
-    workers_per_gpu=8,
+    samples_per_gpu=3,
+    workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_train2017.json',
@@ -106,4 +106,4 @@ test_cfg = dict(
     nms=dict(type='nms', iou_threshold=0.6),
     max_per_img=100)
 # optimizer
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
