@@ -31,19 +31,41 @@ Please see [GETTING_STARTED.md](docs/GETTING_STARTED.md) for the basic usage of 
 # and you have activated your virtual environment if needed.
 # and with COCO dataset in 'data/coco/'
 
-./tools/dist_train.sh configs/ld/ld_gflv1_r101_r50_fpn_coco.py 8
+./tools/dist_train.sh configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py 8
+```
+
+#### Learning rate setting
+
+`lr=(samples_per_gpu * num_gpu) / 16 * 0.01`
+
+For 2 GPUs and mini-batch size 6, the relevant portion of the config file would be:
+
+```python
+optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
+data = dict(
+    samples_per_gpu=3,
+    workers_per_gpu=2,
+```
+
+For 8 GPUs and mini-batch size 16, the relevant portion of the config file would be:
+
+```python
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+data = dict(
+    samples_per_gpu=2,
+    workers_per_gpu=2,
 ```
 
 ## Speed Test (FPS)
 
 ```python
-CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50_fpn_coco.py work_dirs/ld_gflv1_r101_r50_fpn_coco/epoch_24.pth
+CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py work_dirs/ld_gflv1_r101_r50_fpn_coco_1x/epoch_24.pth
 ```
 
 ## COCO Evaluation
 
 ```python
-./tools/dist_test.sh configs/ld/ld_gflv1_r101_r50_fpn_coco.py work_dirs/ld_gflv1_r101_r50_fpn_coco/epoch_24.pth 8 --eval bbox
+./tools/dist_test.sh configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py work_dirs/ld_gflv1_r101_r50_fpn_coco_1x/epoch_24.pth 8 --eval bbox
 ```
 ### GFocalV1 with LD
 | Teacher | Student | Training schedule | AP (val)| AP75 (val)| AP (test-dev)| AP75 (test-dev)| AR100 (test-dev)|
