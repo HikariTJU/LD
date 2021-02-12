@@ -31,5 +31,5 @@ custom_hooks = [dict(type='EpochHook')]
 
 optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
 data = dict(
-    samples_per_gpu=3,
-    workers_per_gpu=3,)
+    samples_per_gpu=2,
+    workers_per_gpu=2,)
