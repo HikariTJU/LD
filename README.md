@@ -116,7 +116,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 |  --    | R-18 | 4 |  51.8  |  75.8  |  56.3  |
 | R-101 | R-18 | 4 |  53.0  |  75.9  |  57.6  |
 |  --    | R-50 | 4 |  55.8  |  79.0  |  60.7  |
-| R-101-| R-50 | 4 |  56.1  |  78.5  |  61.2  |
+| R-101| R-50 | 4 |  56.1  |  78.5  |  61.2  |
 |  --    | R-34 | 4 |  55.7  |  78.9  |  60.6  |
 | R-101-DCN| R-34 | 4 |  56.7  |  78.4  |  62.1  |
 |  --    | R-101 | 4 |  57.6  |  80.4  |  62.7  |
@@ -154,13 +154,9 @@ AP:  0.530091167986393
 ['AP50: 0.759393', 'AP55: 0.744544', 'AP60: 0.724239', 'AP65: 0.693551', 'AP70: 0.639848', 'AP75: 0.576284', 'AP80: 0.489098', 'AP85: 0.378586', 'AP90: 0.226534', 'AP95: 0.068834']
 {'mAP': 0.7593928575515747}
 ```
-
-[0] *The reported numbers here are from new experimental trials (in the cleaned repo), which may be slightly different from the original paper.* \
-[1] *Note that the 1x performance may be slightly unstable due to insufficient training. In practice, the 2x results are considerably stable between multiple runs.* \
-[2] *All results are obtained with a single model and without any test time data augmentation such as multi-scale, flipping and etc..* \
-[3] *`dcnv2` denotes deformable convolutional networks v2. Note that for ResNe(X)t based models, we apply deformable convolutions from stage c3 to c5 in backbones.* \
-[4] *Refer to more details in config files in `config/gfocal/`.* \
-[5] *FPS is tested with a single GeForce RTX 2080Ti GPU, using a batch size of 1.* 
+#### Note:
+ - For more experimental details, please refer to [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
+ - From ATSS, there is no gap between box-based regression and point-based regression. So **Personal Suggestion**: For the box head of regression-based detectors, it is necessary to use general distribution of bbox, IoU-based loss function, and also combine with LD.
 
 ## Citation
 
