@@ -31,23 +31,20 @@ Please see [GETTING_STARTED.md](docs/GETTING_STARTED.md) for the basic usage of 
 # and you have activated your virtual environment if needed.
 # and with COCO dataset in 'data/coco/'
 
-./tools/dist_train.sh configs/ld/ld_r101_r50_fpn_ms2x.py 8
-```
-
-## Inference
-
-```python
-./tools/dist_test.sh configs/ld/ld_r101_r50_fpn_ms2x.py work_dirs/ld_r101_r50_fpn_ms2x/epoch_24.pth 8 --eval bbox
+./tools/dist_train.sh configs/ld/ld_gflv1_r101_r50_fpn_coco.py 8
 ```
 
 ## Speed Test (FPS)
 
 ```python
-CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_ms2x.py work_dirs/ld_r101_r50_fpn_ms2x/epoch_24.pth
+CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50_fpn_coco.py work_dirs/ld_gflv1_r101_r50_fpn_coco/epoch_24.pth
 ```
 
 ## COCO Evaluation
 
+```python
+./tools/dist_test.sh configs/ld/ld_gflv1_r101_r50_fpn_coco.py work_dirs/ld_gflv1_r101_r50_fpn_coco/epoch_24.pth 8 --eval bbox
+```
 ### GFocalV1 with LD
 | Teacher | Student | Training schedule | AP (val)| AP75 (val)| AP (test-dev)| AP75 (test-dev)| AR100 (test-dev)|
 |:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
@@ -87,6 +84,10 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 | R2-101-DCN| R2-101-DCN | 2x |  51.0  |  55.9  |  66.8  |
 
 ## VOC Evaluation
+
+```python
+./tools/dist_test.sh configs/ld/ld_gflv1_r101_r18_fpn_voc.py work_dirs/ld_gflv1_r101_r18_fpn_voc/epoch_4.pth 8 --eval mAP
+```
 
 ### GFocalV1 with LD
 
