@@ -86,6 +86,54 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 |  --    | R2-101-DCN | 2x |  50.5  |  55.1  |  66.2  |
 | R2-101-DCN| R2-101-DCN | 2x |  51.0  |  55.9  |  66.8  |
 
+# VOC Evaluation
+
+### GFocalV1 with LD
+
+| Teacher | Student | Training Epochs | AP | AP50 | AR75 |
+|:----:|:-------:|:-------:|:----:|:----:|:----:|
+|  --    | R-18 | 4 |  51.8  |  75.8  |  56.3  |
+| R-101 | R-18 | 4 |  53.0  |  75.9  |  57.6  |
+|  --    | R-50 | 4 |  55.8  |  79.0  |  60.7  |
+| R-101-| R-50 | 4 |  56.1  |  78.5  |  61.2  |
+|  --    | R-34 | 4 |  55.7  |  78.9  |  60.6  |
+| R-101-DCN| R-34 | 4 |  56.7  |  78.4  |  62.1  |
+|  --    | R-101 | 4 |  57.6  |  80.4  |  62.7  |
+| R-101-DCN| R-101 | 4 |  58.4  |  80.2  |  63.7  |
+
+This is an example of evaluation results (R-101→R-18).
+```
++-------------+------+-------+--------+-------+
+| class       | gts  | dets  | recall | ap    |
++-------------+------+-------+--------+-------+
+| aeroplane   | 285  | 4154  | 0.081  | 0.030 |
+| bicycle     | 337  | 7124  | 0.125  | 0.108 |
+| bird        | 459  | 5326  | 0.096  | 0.018 |
+| boat        | 263  | 8307  | 0.065  | 0.034 |
+| bottle      | 469  | 10203 | 0.051  | 0.045 |
+| bus         | 213  | 4098  | 0.315  | 0.247 |
+| car         | 1201 | 16563 | 0.193  | 0.131 |
+| cat         | 358  | 4878  | 0.254  | 0.128 |
+| chair       | 756  | 32655 | 0.053  | 0.027 |
+| cow         | 244  | 4576  | 0.131  | 0.109 |
+| diningtable | 206  | 13542 | 0.150  | 0.117 |
+| dog         | 489  | 6446  | 0.196  | 0.076 |
+| horse       | 348  | 5855  | 0.144  | 0.036 |
+| motorbike   | 325  | 6733  | 0.052  | 0.017 |
+| person      | 4528 | 51959 | 0.099  | 0.037 |
+| pottedplant | 480  | 12979 | 0.031  | 0.009 |
+| sheep       | 242  | 4706  | 0.132  | 0.060 |
+| sofa        | 239  | 9640  | 0.192  | 0.060 |
+| train       | 282  | 4986  | 0.142  | 0.042 |
+| tvmonitor   | 308  | 7922  | 0.078  | 0.045 |
++-------------+------+-------+--------+-------+
+| mAP         |      |       |        | 0.069 |
++-------------+------+-------+--------+-------+
+AP:  5.30091167986393
+['AP50: 0.759393', 'AP55: 0.744544', 'AP60: 0.724239', 'AP65: 0.693551', 'AP70: 0.639848', 'AP75: 0.576284', 'AP80: 0.489098', 'AP85: 0.378586', 'AP90: 0.226534', 'AP95: 0.068834']
+{'mAP': 0.7593928575515747}
+```
+
 [0] *The reported numbers here are from new experimental trials (in the cleaned repo), which may be slightly different from the original paper.* \
 [1] *Note that the 1x performance may be slightly unstable due to insufficient training. In practice, the 2x results are considerably stable between multiple runs.* \
 [2] *All results are obtained with a single model and without any test time data augmentation such as multi-scale, flipping and etc..* \
