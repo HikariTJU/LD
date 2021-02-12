@@ -3,6 +3,69 @@ from mmcv.ops.nms import batched_nms
 
 from mmdet.core.bbox.iou_calculators import bbox_overlaps
 
+def intersect(box_a, box_b):
+
+    n = box_a.size(0)
+    A = box_a.size(1)
+    B = box_b.size(1)
+    max_xy = torch.min(box_a[:, :, 2:].unsqueeze(2).expand(n, A, B, 2),
+                       box_b[:, :, 2:].unsqueeze(1).expand(n, A, B, 2))
+    min_xy = torch.max(box_a[:, :, :2].unsqueeze(2).expand(n, A, B, 2),
+                       box_b[:, :, :2].unsqueeze(1).expand(n, A, B, 2))
+    inter = torch.clamp((max_xy - min_xy), min=0)
+    return inter[:, :, :, 0] * inter[:, :, :, 1]
+
+def jaccard(box_a, box_b, iscrowd:bool=False):
+    use_batch = True
+    if box_a.dim() == 2:
+        use_batch = False
+        box_a = box_a[None, ...]
+        box_b = box_b[None, ...]
+
+    inter = intersect(box_a, box_b)
+    area_a = ((box_a[:, :, 2]-box_a[:, :, 0]) *
+              (box_a[:, :, 3]-box_a[:, :, 1])).unsqueeze(2).expand_as(inter)  # [A,B]
+    area_b = ((box_b[:, :, 2]-box_b[:, :, 0]) *
+              (box_b[:, :, 3]-box_b[:, :, 1])).unsqueeze(1).expand_as(inter)  # [A,B]
+    union = area_a + area_b - inter
+    out = inter / area_a if iscrowd else inter / (union + 0.0000001)
+
+    return out if use_batch else out.squeeze(0)
+
+def diou(box_a, box_b, beta=1.0, iscrowd:bool=False):
+    use_batch = True
+    if box_a.dim() == 2:
+        use_batch = False
+        box_a = box_a[None, ...]
+        box_b = box_b[None, ...]
+
+    inter = intersect(box_a, box_b)
+    area_a = ((box_a[:, :, 2]-box_a[:, :, 0]) *
+              (box_a[:, :, 3]-box_a[:, :, 1])).unsqueeze(2).expand_as(inter)  # [A,B]
+    area_b = ((box_b[:, :, 2]-box_b[:, :, 0]) *
+              (box_b[:, :, 3]-box_b[:, :, 1])).unsqueeze(1).expand_as(inter)  # [A,B]
+    union = area_a + area_b - inter
+    x1 = ((box_a[:, :, 2]+box_a[:, :, 0]) / 2).unsqueeze(2).expand_as(inter)
+    y1 = ((box_a[:, :, 3]+box_a[:, :, 1]) / 2).unsqueeze(2).expand_as(inter)
+    x2 = ((box_b[:, :, 2]+box_b[:, :, 0]) / 2).unsqueeze(1).expand_as(inter)
+    y2 = ((box_b[:, :, 3]+box_b[:, :, 1]) / 2).unsqueeze(1).expand_as(inter)
+
+    t1 = box_a[:, :, 1].unsqueeze(2).expand_as(inter)
+    b1 = box_a[:, :, 3].unsqueeze(2).expand_as(inter)
+    l1 = box_a[:, :, 0].unsqueeze(2).expand_as(inter)
+    r1 = box_a[:, :, 2].unsqueeze(2).expand_as(inter)
+
+    t2 = box_b[:, :, 1].unsqueeze(1).expand_as(inter)
+    b2 = box_b[:, :, 3].unsqueeze(1).expand_as(inter)
+    l2 = box_b[:, :, 0].unsqueeze(1).expand_as(inter)
+    r2 = box_b[:, :, 2].unsqueeze(1).expand_as(inter)
+    cr = torch.max(r1, r2)
+    cl = torch.min(l1, l2)
+    ct = torch.min(t1, t2)
+    cb = torch.max(b1, b2)
+    D = (((x2 - x1)**2 + (y2 - y1)**2) / ((cr-cl)**2 + (cb-ct)**2 + 1e-7))
+    out = inter / area_a if iscrowd else inter / union - D ** beta
+    return out if use_batch else out.squeeze(0)
 
 def multiclass_nms(multi_bboxes,
                    multi_scores,
@@ -28,6 +91,8 @@ def multiclass_nms(multi_bboxes,
         tuple: (bboxes, labels), tensors of shape (k, 5) and (k, 1). Labels \
             are 0-based.
     """
+    iou_thr = nms_cfg['iou_threshold']
+
     num_classes = multi_scores.size(1) - 1
     # exclude background category
     if multi_bboxes.shape[1] > 4:
@@ -39,7 +104,6 @@ def multiclass_nms(multi_bboxes,
 
     # filter out boxes with low scores
     valid_mask = scores > score_thr
-
     # We use masked_select for ONNX exporting purpose,
     # which is equivalent to bboxes = bboxes[valid_mask]
     # (TODO): as ONNX does not support repeat now,
@@ -62,14 +126,45 @@ def multiclass_nms(multi_bboxes,
                                'as it has not been executed this time')
         return bboxes, labels
 
-    dets, keep = batched_nms(bboxes, scores, labels, nms_cfg)
+    if nms_cfg['type']=='voting_cluster_diounms':    # Score-voting Cluster-DIoU-NMS
+        scores, idx = scores.sort(0, descending=True)
+        bboxes = bboxes[idx]
+        labels = labels[idx]
+        box = bboxes + labels.unsqueeze(1).expand_as(bboxes)*4000
 
-    if max_num > 0:
-        dets = dets[:max_num]
-        keep = keep[:max_num]
+        iouu = diou(box, box, 0.8)
+        iou = (iouu+0).triu_(diagonal=1) 
+        B = iou
+        for i in range(999):
+            A=B
+            maxA = A.max(dim=0)[0]
+            E = (maxA <= iou_thr).float().unsqueeze(1).expand_as(A)
+            B=iou.mul(E)
+            if A.equal(B)==True:
+                break
+        # Now just filter out the ones higher than the threshold
+        B=torch.triu(iouu).mul(E)
+        keep = (maxA <= iou_thr)
 
-    return dets, labels[keep]
+        weights = (torch.exp(-(1-(B*(B>0.7).float()))**2 / 0.025)) * (scores.reshape((1,len(scores))))
+        bboxes = torch.mm(weights, bboxes).float() / weights.sum(1, keepdim=True)
 
+        # Only keep the top max_num highest scores across all classes
+        if max_num > 0:
+            scores = scores[keep][:max_num]
+            labels = labels[keep][:max_num]
+            bboxes = bboxes[keep][:max_num]
+        cls_dets = torch.cat([bboxes, scores[:, None]], dim=1)
+    elif nms_cfg['type']=='nms':    # Original NMS
+        dets, keep = batched_nms(bboxes, scores, labels, nms_cfg)
+
+        if max_num > 0:
+            dets = dets[:max_num]
+            keep = keep[:max_num]
+
+    return cls_dets, labels
+
+  
 
 def fast_nms(multi_bboxes,
              multi_scores,
