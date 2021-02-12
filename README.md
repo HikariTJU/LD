@@ -3,7 +3,7 @@
 ### This repo is based on MMDetection.
 
 This is the code for our papers:
- - [Localization Distillation for Object Detection ](https://arxiv.org/abs/1911.08287)[LD](https://arxiv.org/pdf/2011.12885.pdf)
+ - [Localization Distillation for Object Detection](https://arxiv.org/abs/1911.08287)
 
 LD is a kind of kownledge distillation strategy which utilizes the learned bounding box distributions to transfer the localization knowledge from teacher to student.
 
@@ -163,10 +163,10 @@ AP:  0.530091167986393
 If you find GFocal useful in your research, please consider citing:
 
 ```
-@inproceedings{li2020generalized,
-    title={Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection},
-    author={Li, Xiang and Wang, Wenhai and Wu, Lijun and Chen, Shuo and Hu, Xiaolin and Li, Jun and Tang, Jinhui and Yang, Jian},
-    booktitle={NeurIPS},
-    year={2020}
+@Article{zheng2021LD,
+  title={Localization Distillation for Object Detection},
+  author= {Zhaohui Zheng, Rongguang Ye, Ping Wang, Jun Wang, Dongwei Ren},
+  journal={arXiv:2005.03572},
+  year={2021}
 }
 ```
