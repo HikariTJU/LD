@@ -46,7 +46,7 @@ Please see [GETTING_STARTED.md](docs/GETTING_STARTED.md) for the basic usage of 
 CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_ms2x.py work_dirs/ld_r101_r50_fpn_ms2x/epoch_24.pth
 ```
 
-# COCO Evaluation
+## COCO Evaluation
 
 ### GFocalV1 with LD
 | Teacher | Student | Training schedule | AP (val)| AP75 (val)| AP (test-dev)| AP75 (test-dev)| AR100 (test-dev)|
@@ -86,7 +86,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_r101_r50_fpn_m
 |  --    | R2-101-DCN | 2x |  50.5  |  55.1  |  66.2  |
 | R2-101-DCN| R2-101-DCN | 2x |  51.0  |  55.9  |  66.8  |
 
-# VOC Evaluation
+## VOC Evaluation
 
 ### GFocalV1 with LD
 
