@@ -79,7 +79,7 @@ class VOCDataset(XMLDataset):
                 if iii==0:
                     eval_results['mAP'] = mean_ap
                 map.append('AP'+str(int(50+5*iii))+': '+str(format(mean_ap, '.6f')))
-            print('AP: ', total_ap)
+            print('AP: ', total_ap/10)
             print(map)
         elif metric == 'recall':
             gt_bboxes = [ann['bboxes'] for ann in annotations]
