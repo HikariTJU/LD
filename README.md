@@ -44,7 +44,6 @@ For 2 GPUs and mini-batch size 6, the relevant portion of the config file would 
 optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
 data = dict(
     samples_per_gpu=3,
-    workers_per_gpu=2,
 ```
 
 For 8 GPUs and mini-batch size 16, the relevant portion of the config file would be:
@@ -53,7 +52,6 @@ For 8 GPUs and mini-batch size 16, the relevant portion of the config file would
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 data = dict(
     samples_per_gpu=2,
-    workers_per_gpu=2,
 ```
 
 ## Speed Test (FPS)
