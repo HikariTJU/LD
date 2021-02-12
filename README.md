@@ -5,7 +5,7 @@
 This is the code for our paper:
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/1911.08287)
 
-LD is the extension of knowledge distillation on localization task which utilizes the learned bbox distributions to transfer the localization dark knowledge from teacher to student.
+LD is the extension of knowledge distillation on localization task, which utilizes the learned bbox distributions to transfer the localization dark knowledge from teacher to student.
 
 LD stably improves over GFocalV1 about ~0.8 AP and ~1 AR100 without adding any computational cost! 
 
