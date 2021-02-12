@@ -222,9 +222,9 @@ def ciou_loss(pred, target, eps=1e-7):
 
     factor = 4 / math.pi**2
     v = factor * torch.pow(torch.atan(w2 / h2) - torch.atan(w1 / h1), 2)
-
-    # CIoU
-    cious = ious - (rho2 / c2 + v**2 / (1 - ious + v))
+    with torch.no_grad():
+        alpha = v / (1-ious+v)
+    cious = ious - (rho2 / c2 + alpha*v)
     loss = 1 - cious
     return loss
 
