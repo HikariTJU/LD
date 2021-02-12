@@ -100,8 +100,8 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 | R2-101-DCN| R-101-DCN | 2x | 16 |  49.1  |  53.7  |  65.6  |
 |  --    | X-101-32x4d-DCN | 2x | 16 |  49.0  |  53.4  |  64.7  |
 | R2-101-DCN| X-101-32x4d-DCN | 2x | 16 |  50.2  |  54.9  |  66.3  |
-|  --    | R2-101-DCN | 2x |  50.5  | 16 |  55.1  |  66.2  |
-| R2-101-DCN| R2-101-DCN | 2x |  51.0  | 16 |  55.9  |  66.8  |
+|  --    | R2-101-DCN | 2x | 16 |  50.5  |  55.1  |  66.2  |
+| R2-101-DCN| R2-101-DCN | 2x | 16 |  51.0  |  55.9  |  66.8  |
 
 ## VOC Evaluation
 
