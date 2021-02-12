@@ -161,7 +161,8 @@ def multiclass_nms(multi_bboxes,
         if max_num > 0:
             dets = dets[:max_num]
             keep = keep[:max_num]
-
+    else:
+        assert Exception("The NMS function is unknown.")
     return cls_dets, labels
 
   
