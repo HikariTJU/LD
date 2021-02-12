@@ -85,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 | R-18  | R-18 | 1x | 6 |  36.1  |  38.5  |
 |  --    | R-50 | 1x | 6 |  40.1  |  43.1  |
 | R-50  | R-50 | 1x | 6 |  40.6  |  43.8  |
-|  --    | X-101-32x4d-DCN | 4 | 1x |  46.9  |  51.1  |
+|  --    | X-101-32x4d-DCN | 1x | 4 |  46.9  |  51.1  |
 | X-101-32x4d-DCN | X-101-32x4d-DCN | 1x | 4 |  47.5 |  51.8  |
 
 ### GFocalV2 with LD
