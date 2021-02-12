@@ -111,7 +111,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 ### GFocalV1 with LD
 
-| Teacher | Student | Training Epochs | Mini-batch size | AP | AP50 | AR75 |
+| Teacher | Student | Training Epochs | Mini-batch size | AP | AP50 | AP75 |
 |:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|
 |  --    | R-18 | 4 | 6 |  51.8  |  75.8  |  56.3  |
 | R-101 | R-18 | 4 | 6 |  53.0  |  75.9  |  57.6  |
