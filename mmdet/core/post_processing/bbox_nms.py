@@ -154,16 +154,17 @@ def multiclass_nms(multi_bboxes,
             scores = scores[keep][:max_num]
             labels = labels[keep][:max_num]
             bboxes = bboxes[keep][:max_num]
-        cls_dets = torch.cat([bboxes, scores[:, None]], dim=1)
+        dets = torch.cat([bboxes, scores[:, None]], dim=1)
     elif nms_cfg['type']=='nms':    # Original NMS
         dets, keep = batched_nms(bboxes, scores, labels, nms_cfg)
 
         if max_num > 0:
             dets = dets[:max_num]
-            keep = keep[:max_num]
+            labels = labels[keep][:max_num]
+
     else:
-        assert Exception("The NMS function is unknown.")
-    return cls_dets, labels
+        print("Error: The NMS function is unknown. Please check your cfg file.")
+    return dets, labels
 
   
 
