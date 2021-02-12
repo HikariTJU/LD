@@ -2,7 +2,7 @@
 
 ### This repo is based on MMDetection.
 
-This is the code for our papers:
+This is the code for our paper:
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/1911.08287)
 
 LD is a kind of kownledge distillation strategy which utilizes the learned bounding box distributions to transfer the localization knowledge from teacher to student.
