@@ -156,7 +156,8 @@ AP:  0.530091167986393
 ```
 #### Note:
  - For more experimental details, please refer to [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
- - From ATSS, there is no gap between box-based regression and point-based regression. So **Personal Suggestion**: For the box head of regression-based detectors, it is necessary to use general distribution of bbox, CIoU loss function, and also combine with LD.
+ - According to ATSS, there is no gap between box-based regression and point-based regression. **Personal conjectures**: 1) If xywh form is able to work when using general distribution (apply uniform division for xywh), our LD can also work in xywh form. 2) If xywh form with general distribution cannot obtain better result, then the best modification is to firstly switch xywh form to tblr form and then apply general distribution and LD. **Consequently**, whether xywh form + general distribution works or not, our LD benefits for all the regression-based detectors.
+
 
 ## Citation
 
