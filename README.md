@@ -118,16 +118,21 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 ### GFocalV1 with LD
 
-| Teacher | Student | Training Epochs | Mini-batch size | AP | AP50 | AP75 | Link |
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:-------:|
-|  --    | R-18 | 4 | 6 |  51.8  |  75.8  |  56.3  | [pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 |
-| R-101  | R-18 | 4 | 6 |  53.0  |  75.9  |  57.6  | [pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 |
-|  --    | R-50 | 4 | 6 |  55.8  |  79.0  |  60.7  ||
-| R-101| R-50 | 4 | 6 |  56.1  |  78.5  |  61.2  ||
-|  --    | R-34 | 4 | 6 |  55.7  |  78.9  |  60.6  ||
-| R-101-DCN| R-34 | 4 | 6 |  56.7  |  78.4  |  62.1  | [pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra |
-|  --    | R-101 | 4 | 6 |  57.6  |  80.4  |  62.7  ||
-| R-101-DCN| R-101 | 4 | 6 |  58.4  |  80.2  |  63.7  ||
+| Teacher | Student | Training Epochs | Mini-batch size | AP | AP50 | AP75 |
+|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|
+|  --    | R-18 | 4 | 6 |  51.8  |  75.8  |  56.3  |
+| R-101  | R-18 | 4 | 6 |  53.0  |  75.9  |  57.6  | 
+|  --    | R-50 | 4 | 6 |  55.8  |  79.0  |  60.7  |
+| R-101| R-50 | 4 | 6 |  56.1  |  78.5  |  61.2  |
+|  --    | R-34 | 4 | 6 |  55.7  |  78.9  |  60.6  |
+| R-101-DCN| R-34 | 4 | 6 |  56.7  |  78.4  |  62.1  |
+|  --    | R-101 | 4 | 6 |  57.6  |  80.4  |  62.7  |
+| R-101-DCN| R-101 | 4 | 6 |  58.4  |  80.2  |  63.7  |
+
+[VOC teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8
+[VOC teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra
+[VOC LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3
+
 
 This is an example of evaluation results (R-101→R-18).
 ```
