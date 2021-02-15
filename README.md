@@ -158,6 +158,18 @@ AP:  0.530091167986393
  - For more experimental details, please refer to [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
  - According to ATSS, there is no gap between box-based regression and point-based regression. **Personal conjectures**: 1) If xywh form is able to work when using general distribution (apply uniform division for xywh), our LD can also work in xywh form. 2) If xywh form with general distribution cannot obtain better result, then the best modification is to firstly switch xywh form to tblr form and then apply general distribution and LD. **Consequently**, whether xywh form + general distribution works or not, our LD benefits for all the regression-based detectors.
 
+## Score voting Cluster-DIoU-NMS
+We provide Score voting Cluster-DIoU-NMS which is a speed up version of score voting NMS and combination with DIoU-NMS. The relevant portion of the config file would be:
+
+```
+# Score voting Cluster-DIoU-NMS
+test_cfg = dict(
+nms=dict(type='voting_cluster_diounms', iou_threshold=0.6),
+
+# Original NMS
+test_cfg = dict(
+nms=dict(type='nms', iou_threshold=0.6),
+```
 
 ## Citation
 
