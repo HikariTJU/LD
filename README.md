@@ -166,10 +166,11 @@ AP:  0.530091167986393
  - According to ATSS, there is no gap between box-based regression and point-based regression. **Personal conjectures**: 1) If xywh form is able to work when using general distribution (apply uniform subinterval division for xywh), our LD can also work in xywh form. 2) If xywh form with general distribution cannot obtain better result, then the best modification is to firstly switch xywh form to tblr form and then apply general distribution and LD. **Consequently**, whether xywh form + general distribution works or not, our LD benefits for all the regression-based detector.
 
 ## Pretrained weights
-|:----:|
-|[VOC teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8|
-|[VOC teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra|
-|[VOC LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3|
+| VOC | COCO |
+|:----:|:----:|
+|[VOC teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8||
+|[VOC teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra||
+|[VOC LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3||
 
 
 ## Score voting Cluster-DIoU-NMS
