@@ -169,10 +169,10 @@ AP:  0.530091167986393
 | VOC | COCO |
 |:----:|:----:|
 |[GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | [GFocalV1 + LD R101_R18_1x pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d |
-|[GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra | [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz　｜
+|[GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra | [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
 |[GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 |[GFocalV2 + LD R101_R50_2x pan.baidu](https://pan.baidu.com/s/1WA8KLmz-_aWp07Rqw50qXg) pw: 3jtq |
-|[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t|[GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
-|| [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm |
+|[GFocalV1 + LD R101DCN_R34 pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw |[GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
+|[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm |
 || [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc|
 || [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn|
 ## Score voting Cluster-DIoU-NMS
