@@ -175,10 +175,12 @@ AP:  0.530091167986393
 |[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm |
 || [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc|
 || [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn|
+
+##### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
+
 ## Score voting Cluster-DIoU-NMS
 We provide Score voting Cluster-DIoU-NMS which is a speed up version of score voting NMS and combination with DIoU-NMS. For GFocalV1 and GFocalV2, Score voting Cluster-DIoU-NMS will bring 0.1-0.3 AP increase, 0.2-0.5 AP75 increase, <=0.4 AP50 decrease and <=1.5 FPS decrease, while it is much faster than score voting NMS in mmdetection. The relevant portion of the config file would be:
 
-For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
 ```
 # Score voting Cluster-DIoU-NMS
 test_cfg = dict(
