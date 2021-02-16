@@ -1,6 +1,6 @@
 # Localization Distillation for Object Detection 
 
-### This repo is based on MMDetection.
+### This repo is based on mmDetection.
 
 This is the code for our paper:
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/1911.08287)
