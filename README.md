@@ -168,11 +168,11 @@ AP:  0.530091167986393
 ## Pretrained weights
 | VOC | COCO |
 |:----:|:----:|
-|[GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 ||
-|[GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra ||
-|[GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 ||
-|[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t ||
-
+|[GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | [GFocalV2 + LD R101_R50_2x pan.baidu](https://pan.baidu.com/s/1WA8KLmz-_aWp07Rqw50qXg) pw: 3jtq |
+|[GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra | [GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
+|[GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 | [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm |
+|[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc|
+|| [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn|
 ## Score voting Cluster-DIoU-NMS
 We provide Score voting Cluster-DIoU-NMS which is a speed up version of score voting NMS and combination with DIoU-NMS. For GFocalV1 and GFocalV2, Score voting Cluster-DIoU-NMS will bring 0.1-0.3 AP increase, 0.2-0.5 AP75 increase, <=0.4 AP50 decrease and <=1.5 FPS decrease, while it is much faster than score voting NMS in mmdetection. The relevant portion of the config file would be:
 
