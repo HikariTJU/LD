@@ -23,9 +23,9 @@ from .sabl_retina_head import SABLRetinaHead
 from .ssd_head import SSDHead
 from .yolact_head import YOLACTHead, YOLACTProtonet, YOLACTSegmHead
 from .yolo_head import YOLOV3Head
-from .kdgfl_head import KDGFLHead
+from .ld_head import LDGFLHead
 from .gfocal_head import GFocalHead
-from .kdgfocal_head import KDGFocalHead
+from .ldgflv2_head import LDGFLv2Head
 
 __all__ = [
     'AnchorFreeHead', 'AnchorHead', 'GuidedAnchorHead', 'FeatureAdaption',
@@ -34,5 +34,6 @@ __all__ = [
     'FreeAnchorRetinaHead', 'ATSSHead', 'FSAFHead', 'NASFCOSHead',
     'PISARetinaHead', 'PISASSDHead', 'GFLHead', 'CornerHead', 'YOLACTHead',
     'YOLACTSegmHead', 'YOLACTProtonet', 'YOLOV3Head', 'PAAHead',
-    'SABLRetinaHead', 'CentripetalHead', 'KDGFLHead', 'GFocalHead', 'KDGFocalHead'
+    'SABLRetinaHead', 'CentripetalHead', 'LDGFLHead', 'GFocalHead',
+    'LDGFLv2Head'
 ]

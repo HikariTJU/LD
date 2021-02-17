@@ -4,8 +4,10 @@ import torch.nn.functional as F
 from mmcv.cnn import ConvModule, Scale, bias_init_with_prob, normal_init
 from mmcv.runner import force_fp32
 
-from mmdet.core import (anchor_inside_flags, bbox2distance, bbox_overlaps, build_assigner, build_sampler, distance2bbox,
-                        images_to_levels, multi_apply, multiclass_nms, reduce_mean, unmap)
+from mmdet.core import (anchor_inside_flags, bbox2distance, bbox_overlaps,
+                        build_assigner, build_sampler, distance2bbox,
+                        images_to_levels, multi_apply, multiclass_nms,
+                        reduce_mean, unmap)
 from ..builder import HEADS, build_loss
 from .anchor_head import AnchorHead
 
@@ -31,7 +33,8 @@ def init_detector(config, checkpoint=None, device='cuda:0'):
     if isinstance(config, str):
         config = mmcv.Config.fromfile(config)
     elif not isinstance(config, mmcv.Config):
-        raise TypeError('config must be a filename or Config object, ' f'but got {type(config)}')
+        raise TypeError('config must be a filename or Config object, '
+                        f'but got {type(config)}')
     config.model.pretrained = None
     model = build_detector(config.model, test_cfg=config.test_cfg)
     if checkpoint is not None:
@@ -60,10 +63,12 @@ class Integral(nn.Module):
             may want to reset it according to your new dataset or related
             settings.
     """
+
     def __init__(self, reg_max=16):
         super(Integral, self).__init__()
         self.reg_max = reg_max
-        self.register_buffer('project', torch.linspace(0, self.reg_max, self.reg_max + 1))
+        self.register_buffer('project',
+                             torch.linspace(0, self.reg_max, self.reg_max + 1))
 
     def forward(self, x):
         """Forward feature from the regression head to get integral result of
@@ -81,7 +86,7 @@ class Integral(nn.Module):
 
 
 @HEADS.register_module()
-class KDGFocalHead(AnchorHead):
+class LDGFLv2Head(AnchorHead):
     """Generalized Focal Loss V2: Learning Reliable Localization Quality
     Estimation for Dense Object Detection.
     GFocal head structure is similar with GFL head, however GFocal uses
@@ -108,20 +113,22 @@ class KDGFocalHead(AnchorHead):
         >>> cls_quality_score, bbox_pred = self.forward(feats)
         >>> assert len(cls_quality_score) == len(self.scales)
     """
-    def __init__(self,
-                 num_classes,
-                 in_channels,
-                 stacked_convs=4,
-                 conv_cfg=None,
-                 teacher_config='configs/gfl/gfl_x101_32x4d_fpn_dconv_c4-c5_mstrain_2x_coco.py',
-                 teacher_model='gfl_x101_32x4d_fpn_dconv_c4-c5_mstrain_2x_coco_20200630_102002-14a2bf25.pth',
-                 norm_cfg=dict(type='GN', num_groups=32, requires_grad=True),
-                 loss_dfl=dict(type='DistributionFocalLoss', loss_weight=0.25),
-                 reg_max=16,
-                 reg_topk=4,
-                 reg_channels=64,
-                 add_mean=True,
-                 **kwargs):
+
+    def __init__(
+            self,
+            num_classes,
+            in_channels,
+            stacked_convs=4,
+            conv_cfg=None,
+            teacher_config='configs/gfl/gfl_x101_32x4d_fpn_dconv_c4-c5_mstrain_2x_coco.py',
+            teacher_model='gfl_x101_32x4d_fpn_dconv_c4-c5_mstrain_2x_coco_20200630_102002-14a2bf25.pth',
+            norm_cfg=dict(type='GN', num_groups=32, requires_grad=True),
+            loss_dfl=dict(type='DistributionFocalLoss', loss_weight=0.25),
+            reg_max=16,
+            reg_topk=4,
+            reg_channels=64,
+            add_mean=True,
+            **kwargs):
         self.stacked_convs = stacked_convs
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
@@ -134,7 +141,7 @@ class KDGFocalHead(AnchorHead):
             self.total_dim += 1
         print('total dim = ', self.total_dim * 4)
 
-        super(KDGFocalHead, self).__init__(num_classes, in_channels, **kwargs)
+        super(LDGFLv2Head, self).__init__(num_classes, in_channels, **kwargs)
         self.teacher_models = init_detector(teacher_config, teacher_model)
         self.sampling = False
         if self.train_cfg:
@@ -154,25 +161,30 @@ class KDGFocalHead(AnchorHead):
         for i in range(self.stacked_convs):
             chn = self.in_channels if i == 0 else self.feat_channels
             self.cls_convs.append(
-                ConvModule(chn,
-                           self.feat_channels,
-                           3,
-                           stride=1,
-                           padding=1,
-                           conv_cfg=self.conv_cfg,
-                           norm_cfg=self.norm_cfg))
+                ConvModule(
+                    chn,
+                    self.feat_channels,
+                    3,
+                    stride=1,
+                    padding=1,
+                    conv_cfg=self.conv_cfg,
+                    norm_cfg=self.norm_cfg))
             self.reg_convs.append(
-                ConvModule(chn,
-                           self.feat_channels,
-                           3,
-                           stride=1,
-                           padding=1,
-                           conv_cfg=self.conv_cfg,
-                           norm_cfg=self.norm_cfg))
+                ConvModule(
+                    chn,
+                    self.feat_channels,
+                    3,
+                    stride=1,
+                    padding=1,
+                    conv_cfg=self.conv_cfg,
+                    norm_cfg=self.norm_cfg))
         assert self.num_anchors == 1, 'anchor free version'
-        self.gfl_cls = nn.Conv2d(self.feat_channels, self.cls_out_channels, 3, padding=1)
-        self.gfl_reg = nn.Conv2d(self.feat_channels, 4 * (self.reg_max + 1), 3, padding=1)
-        self.scales = nn.ModuleList([Scale(1.0) for _ in self.anchor_generator.strides])
+        self.gfl_cls = nn.Conv2d(
+            self.feat_channels, self.cls_out_channels, 3, padding=1)
+        self.gfl_reg = nn.Conv2d(
+            self.feat_channels, 4 * (self.reg_max + 1), 3, padding=1)
+        self.scales = nn.ModuleList(
+            [Scale(1.0) for _ in self.anchor_generator.strides])
 
         conf_vector = [nn.Conv2d(4 * self.total_dim, self.reg_channels, 1)]
         conf_vector += [self.relu]
@@ -232,11 +244,13 @@ class KDGFocalHead(AnchorHead):
 
         bbox_pred = scale(self.gfl_reg(reg_feat)).float()
         N, C, H, W = bbox_pred.size()
-        prob = F.softmax(bbox_pred.reshape(N, 4, self.reg_max + 1, H, W), dim=2)
+        prob = F.softmax(
+            bbox_pred.reshape(N, 4, self.reg_max + 1, H, W), dim=2)
         prob_topk, _ = prob.topk(self.reg_topk, dim=2)
 
         if self.add_mean:
-            stat = torch.cat([prob_topk, prob_topk.mean(dim=2, keepdim=True)], dim=2)
+            stat = torch.cat(
+                [prob_topk, prob_topk.mean(dim=2, keepdim=True)], dim=2)
         else:
             stat = prob_topk
 
@@ -256,8 +270,8 @@ class KDGFocalHead(AnchorHead):
         anchors_cy = (anchors[:, 3] + anchors[:, 1]) / 2
         return torch.stack([anchors_cx, anchors_cy], dim=-1)
 
-    def loss_single(self, anchors, cls_score, bbox_pred, labels, label_weights, bbox_targets, stride, soft_targets,
-                    num_total_samples):
+    def loss_single(self, anchors, cls_score, bbox_pred, labels, label_weights,
+                    bbox_targets, stride, soft_targets, num_total_samples):
         """Compute loss of a single scale level.
         Args:
             anchors (Tensor): Box reference for each scale level with shape
@@ -281,9 +295,13 @@ class KDGFocalHead(AnchorHead):
         """
         assert stride[0] == stride[1], 'h stride is not equal to w stride!'
         anchors = anchors.reshape(-1, 4)
-        cls_score = cls_score.permute(0, 2, 3, 1).reshape(-1, self.cls_out_channels)
-        bbox_pred = bbox_pred.permute(0, 2, 3, 1).reshape(-1, 4 * (self.reg_max + 1))
-        soft_targets = soft_targets.permute(0, 2, 3, 1).reshape(-1, 4 * (self.reg_max + 1))
+        cls_score = cls_score.permute(0, 2, 3,
+                                      1).reshape(-1, self.cls_out_channels)
+        bbox_pred = bbox_pred.permute(0, 2, 3,
+                                      1).reshape(-1, 4 * (self.reg_max + 1))
+        soft_targets = soft_targets.permute(0, 2, 3,
+                                            1).reshape(-1,
+                                                       4 * (self.reg_max + 1))
 
         bbox_targets = bbox_targets.reshape(-1, 4)
         labels = labels.reshape(-1)
@@ -291,7 +309,8 @@ class KDGFocalHead(AnchorHead):
 
         # FG cat_id: [0, num_classes -1], BG cat_id: num_classes
         bg_class_ind = self.num_classes
-        pos_inds = ((labels >= 0) & (labels < bg_class_ind)).nonzero().squeeze(1)
+        pos_inds = ((labels >= 0) &
+                    (labels < bg_class_ind)).nonzero().squeeze(1)
         score = label_weights.new_zeros(labels.shape)
 
         if len(pos_inds) > 0:
@@ -303,27 +322,35 @@ class KDGFocalHead(AnchorHead):
             weight_targets = cls_score.detach()
             weight_targets = weight_targets.max(dim=1)[0][pos_inds]
             pos_bbox_pred_corners = self.integral(pos_bbox_pred)
-            pos_decode_bbox_pred = distance2bbox(pos_anchor_centers, pos_bbox_pred_corners)
+            pos_decode_bbox_pred = distance2bbox(pos_anchor_centers,
+                                                 pos_bbox_pred_corners)
             pos_decode_bbox_targets = pos_bbox_targets / stride[0]
-            score[pos_inds] = bbox_overlaps(pos_decode_bbox_pred.detach(), pos_decode_bbox_targets, is_aligned=True)
+            score[pos_inds] = bbox_overlaps(
+                pos_decode_bbox_pred.detach(),
+                pos_decode_bbox_targets,
+                is_aligned=True)
             pred_corners = pos_bbox_pred.reshape(-1, self.reg_max + 1)
 
             pos_soft_targets = soft_targets[pos_inds]
             soft_corners = pos_soft_targets.reshape(-1, self.reg_max + 1)
-            target_corners = bbox2distance(pos_anchor_centers, pos_decode_bbox_targets, self.reg_max).reshape(-1)
+            target_corners = bbox2distance(pos_anchor_centers,
+                                           pos_decode_bbox_targets,
+                                           self.reg_max).reshape(-1)
 
             # regression loss
-            loss_bbox = self.loss_bbox(pos_decode_bbox_pred,
-                                       pos_decode_bbox_targets,
-                                       weight=weight_targets,
-                                       avg_factor=1.0)
+            loss_bbox = self.loss_bbox(
+                pos_decode_bbox_pred,
+                pos_decode_bbox_targets,
+                weight=weight_targets,
+                avg_factor=1.0)
 
             # dfl loss
-            loss_dfl, loss_kd = self.loss_dfl(pred_corners,
-                                              target_corners,
-                                              soft_corners,
-                                              weight=weight_targets[:, None].expand(-1, 4).reshape(-1),
-                                              avg_factor=4.0)
+            loss_dfl, loss_kd = self.loss_dfl(
+                pred_corners,
+                target_corners,
+                soft_corners,
+                weight=weight_targets[:, None].expand(-1, 4).reshape(-1),
+                avg_factor=4.0)
         else:
             loss_kd = bbox_pred.sum() * 0
 
@@ -332,7 +359,10 @@ class KDGFocalHead(AnchorHead):
             weight_targets = torch.tensor(0).cuda()
 
         # cls (qfl) loss
-        loss_cls = self.loss_cls(cls_score, (labels, score), weight=label_weights, avg_factor=num_total_samples)
+        loss_cls = self.loss_cls(
+            cls_score, (labels, score),
+            weight=label_weights,
+            avg_factor=num_total_samples)
 
         return loss_cls, loss_bbox, loss_dfl, loss_kd, weight_targets.sum()
 
@@ -377,7 +407,14 @@ class KDGFocalHead(AnchorHead):
             return losses, proposal_list
 
     @force_fp32(apply_to=('cls_scores', 'bbox_preds'))
-    def loss(self, cls_scores, bbox_preds, gt_bboxes, gt_labels, img_metas, img, gt_bboxes_ignore=None):
+    def loss(self,
+             cls_scores,
+             bbox_preds,
+             gt_bboxes,
+             gt_labels,
+             img_metas,
+             img,
+             gt_bboxes_ignore=None):
         """Compute losses of the head.
         Args:
             cls_scores (list[Tensor]): Cls and quality scores for each scale
@@ -400,28 +437,32 @@ class KDGFocalHead(AnchorHead):
         assert len(featmap_sizes) == self.anchor_generator.num_levels
 
         device = cls_scores[0].device
-        anchor_list, valid_flag_list = self.get_anchors(featmap_sizes, img_metas, device=device)
+        anchor_list, valid_flag_list = self.get_anchors(
+            featmap_sizes, img_metas, device=device)
         label_channels = self.cls_out_channels if self.use_sigmoid_cls else 1
         with torch.no_grad():
-            soft_target = self.teacher_models(return_loss=False,
-                                              return_gfl=True,
-                                              rescale=True,
-                                              img=[img],
-                                              img_metas=[img_metas])[1]
-        cls_reg_targets = self.get_targets(anchor_list,
-                                           valid_flag_list,
-                                           gt_bboxes,
-                                           img_metas,
-                                           gt_bboxes_ignore_list=gt_bboxes_ignore,
-                                           gt_labels_list=gt_labels,
-                                           label_channels=label_channels)
+            soft_target = self.teacher_models(
+                return_loss=False,
+                return_gfl=True,
+                rescale=True,
+                img=[img],
+                img_metas=[img_metas])[1]
+        cls_reg_targets = self.get_targets(
+            anchor_list,
+            valid_flag_list,
+            gt_bboxes,
+            img_metas,
+            gt_bboxes_ignore_list=gt_bboxes_ignore,
+            gt_labels_list=gt_labels,
+            label_channels=label_channels)
         if cls_reg_targets is None:
             return None
 
-        (anchor_list, labels_list, label_weights_list, bbox_targets_list, bbox_weights_list, num_total_pos,
-         num_total_neg) = cls_reg_targets
+        (anchor_list, labels_list, label_weights_list, bbox_targets_list,
+         bbox_weights_list, num_total_pos, num_total_neg) = cls_reg_targets
 
-        num_total_samples = reduce_mean(torch.tensor(num_total_pos).cuda()).item()
+        num_total_samples = reduce_mean(
+            torch.tensor(num_total_pos).cuda()).item()
         num_total_samples = max(num_total_samples, 1.0)
 
         losses_cls, losses_bbox, losses_dfl, loss_kd,\
@@ -441,7 +482,11 @@ class KDGFocalHead(AnchorHead):
         avg_factor = reduce_mean(avg_factor).item()
         losses_bbox = list(map(lambda x: x / avg_factor, losses_bbox))
         losses_dfl = list(map(lambda x: x / avg_factor, losses_dfl))
-        return dict(loss_cls=losses_cls, loss_bbox=losses_bbox, loss_dfl=losses_dfl, loss_kd=loss_kd)
+        return dict(
+            loss_cls=losses_cls,
+            loss_bbox=losses_bbox,
+            loss_dfl=losses_dfl,
+            loss_kd=loss_kd)
 
     def _get_bboxes_single(self,
                            cls_scores,
@@ -484,12 +529,14 @@ class KDGFocalHead(AnchorHead):
         assert len(cls_scores) == len(bbox_preds) == len(mlvl_anchors)
         mlvl_bboxes = []
         mlvl_scores = []
-        for cls_score, bbox_pred, stride, anchors in zip(cls_scores, bbox_preds, self.anchor_generator.strides,
-                                                         mlvl_anchors):
+        for cls_score, bbox_pred, stride, anchors in zip(
+                cls_scores, bbox_preds, self.anchor_generator.strides,
+                mlvl_anchors):
             assert cls_score.size()[-2:] == bbox_pred.size()[-2:]
             assert stride[0] == stride[1]
 
-            scores = cls_score.permute(1, 2, 0).reshape(-1, self.cls_out_channels)
+            scores = cls_score.permute(1, 2,
+                                       0).reshape(-1, self.cls_out_channels)
             bbox_pred = bbox_pred.permute(1, 2, 0)
             bbox_pred = self.integral(bbox_pred) * stride[0]
 
@@ -501,7 +548,8 @@ class KDGFocalHead(AnchorHead):
                 bbox_pred = bbox_pred[topk_inds, :]
                 scores = scores[topk_inds, :]
 
-            bboxes = distance2bbox(self.anchor_center(anchors), bbox_pred, max_shape=img_shape)
+            bboxes = distance2bbox(
+                self.anchor_center(anchors), bbox_pred, max_shape=img_shape)
             mlvl_bboxes.append(bboxes)
             mlvl_scores.append(scores)
 
@@ -517,7 +565,9 @@ class KDGFocalHead(AnchorHead):
         mlvl_scores = torch.cat([mlvl_scores, padding], dim=1)
 
         if with_nms:
-            det_bboxes, det_labels = multiclass_nms(mlvl_bboxes, mlvl_scores, cfg.score_thr, cfg.nms, cfg.max_per_img)
+            det_bboxes, det_labels = multiclass_nms(mlvl_bboxes, mlvl_scores,
+                                                    cfg.score_thr, cfg.nms,
+                                                    cfg.max_per_img)
             return det_bboxes, det_labels
         else:
             return mlvl_bboxes, mlvl_scores
@@ -554,17 +604,18 @@ class KDGFocalHead(AnchorHead):
             gt_bboxes_ignore_list = [None for _ in range(num_imgs)]
         if gt_labels_list is None:
             gt_labels_list = [None for _ in range(num_imgs)]
-        (all_anchors, all_labels, all_label_weights, all_bbox_targets, all_bbox_weights, pos_inds_list,
-         neg_inds_list) = multi_apply(self._get_target_single,
-                                      anchor_list,
-                                      valid_flag_list,
-                                      num_level_anchors_list,
-                                      gt_bboxes_list,
-                                      gt_bboxes_ignore_list,
-                                      gt_labels_list,
-                                      img_metas,
-                                      label_channels=label_channels,
-                                      unmap_outputs=unmap_outputs)
+        (all_anchors, all_labels, all_label_weights, all_bbox_targets,
+         all_bbox_weights, pos_inds_list, neg_inds_list) = multi_apply(
+             self._get_target_single,
+             anchor_list,
+             valid_flag_list,
+             num_level_anchors_list,
+             gt_bboxes_list,
+             gt_bboxes_ignore_list,
+             gt_labels_list,
+             img_metas,
+             label_channels=label_channels,
+             unmap_outputs=unmap_outputs)
         # no valid anchors
         if any([labels is None for labels in all_labels]):
             return None
@@ -574,10 +625,14 @@ class KDGFocalHead(AnchorHead):
         # split targets to a list w.r.t. multiple levels
         anchors_list = images_to_levels(all_anchors, num_level_anchors)
         labels_list = images_to_levels(all_labels, num_level_anchors)
-        label_weights_list = images_to_levels(all_label_weights, num_level_anchors)
-        bbox_targets_list = images_to_levels(all_bbox_targets, num_level_anchors)
-        bbox_weights_list = images_to_levels(all_bbox_weights, num_level_anchors)
-        return (anchors_list, labels_list, label_weights_list, bbox_targets_list, bbox_weights_list, num_total_pos,
+        label_weights_list = images_to_levels(all_label_weights,
+                                              num_level_anchors)
+        bbox_targets_list = images_to_levels(all_bbox_targets,
+                                             num_level_anchors)
+        bbox_weights_list = images_to_levels(all_bbox_weights,
+                                             num_level_anchors)
+        return (anchors_list, labels_list, label_weights_list,
+                bbox_targets_list, bbox_weights_list, num_total_pos,
                 num_total_neg)
 
     def _get_target_single(self,
@@ -625,22 +680,29 @@ class KDGFocalHead(AnchorHead):
                 neg_inds (Tensor): Indices of negative anchor with shape
                     (num_neg,).
         """
-        inside_flags = anchor_inside_flags(flat_anchors, valid_flags, img_meta['img_shape'][:2],
+        inside_flags = anchor_inside_flags(flat_anchors, valid_flags,
+                                           img_meta['img_shape'][:2],
                                            self.train_cfg.allowed_border)
         if not inside_flags.any():
             return (None, ) * 7
         # assign gt and sample anchors
         anchors = flat_anchors[inside_flags, :]
 
-        num_level_anchors_inside = self.get_num_level_anchors_inside(num_level_anchors, inside_flags)
-        assign_result = self.assigner.assign(anchors, num_level_anchors_inside, gt_bboxes, gt_bboxes_ignore, gt_labels)
+        num_level_anchors_inside = self.get_num_level_anchors_inside(
+            num_level_anchors, inside_flags)
+        assign_result = self.assigner.assign(anchors, num_level_anchors_inside,
+                                             gt_bboxes, gt_bboxes_ignore,
+                                             gt_labels)
 
-        sampling_result = self.sampler.sample(assign_result, anchors, gt_bboxes)
+        sampling_result = self.sampler.sample(assign_result, anchors,
+                                              gt_bboxes)
 
         num_valid_anchors = anchors.shape[0]
         bbox_targets = torch.zeros_like(anchors)
         bbox_weights = torch.zeros_like(anchors)
-        labels = anchors.new_full((num_valid_anchors, ), self.num_classes, dtype=torch.long)
+        labels = anchors.new_full((num_valid_anchors, ),
+                                  self.num_classes,
+                                  dtype=torch.long)
         label_weights = anchors.new_zeros(num_valid_anchors, dtype=torch.float)
 
         pos_inds = sampling_result.pos_inds
@@ -654,7 +716,8 @@ class KDGFocalHead(AnchorHead):
                 # Foreground is the first class
                 labels[pos_inds] = 0
             else:
-                labels[pos_inds] = gt_labels[sampling_result.pos_assigned_gt_inds]
+                labels[pos_inds] = gt_labels[
+                    sampling_result.pos_assigned_gt_inds]
             if self.train_cfg.pos_weight <= 0:
                 label_weights[pos_inds] = 1.0
             else:
@@ -666,14 +729,19 @@ class KDGFocalHead(AnchorHead):
         if unmap_outputs:
             num_total_anchors = flat_anchors.size(0)
             anchors = unmap(anchors, num_total_anchors, inside_flags)
-            labels = unmap(labels, num_total_anchors, inside_flags, fill=self.num_classes)
-            label_weights = unmap(label_weights, num_total_anchors, inside_flags)
+            labels = unmap(
+                labels, num_total_anchors, inside_flags, fill=self.num_classes)
+            label_weights = unmap(label_weights, num_total_anchors,
+                                  inside_flags)
             bbox_targets = unmap(bbox_targets, num_total_anchors, inside_flags)
             bbox_weights = unmap(bbox_weights, num_total_anchors, inside_flags)
 
-        return (anchors, labels, label_weights, bbox_targets, bbox_weights, pos_inds, neg_inds)
+        return (anchors, labels, label_weights, bbox_targets, bbox_weights,
+                pos_inds, neg_inds)
 
     def get_num_level_anchors_inside(self, num_level_anchors, inside_flags):
         split_inside_flags = torch.split(inside_flags, num_level_anchors)
-        num_level_anchors_inside = [int(flags.sum()) for flags in split_inside_flags]
+        num_level_anchors_inside = [
+            int(flags.sum()) for flags in split_inside_flags
+        ]
         return num_level_anchors_inside

@@ -1,7 +1,4 @@
-_base_ = [
-    '../_base_/datasets/voc0712.py',
-    '../_base_/default_runtime.py'
-]
+_base_ = ['../_base_/datasets/voc0712.py', '../_base_/default_runtime.py']
 
 model = dict(
     type='GFL',
@@ -23,7 +20,7 @@ model = dict(
         add_extra_convs='on_output',
         num_outs=5),
     bbox_head=dict(
-        type='KDGFLHead',
+        type='LDGFLHead',
         num_classes=20,
         in_channels=256,
         stacked_convs=4,
@@ -41,8 +38,7 @@ model = dict(
             use_sigmoid=True,
             beta=2.0,
             loss_weight=1.0),
-        loss_dfl=dict(type='KDDistributionFocalLoss',
-                      loss_weight=0.25, T=10, alpha=1),
+        loss_dfl=dict(type='LDLoss', loss_weight=0.25, T=10, alpha=1),
         reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 # training and testing settings

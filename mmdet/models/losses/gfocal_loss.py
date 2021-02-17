@@ -173,7 +173,7 @@ class DistributionFocalLoss(nn.Module):
 
 
 @LOSSES.register_module()
-class KDDistributionFocalLoss(nn.Module):
+class LDLoss(nn.Module):
     r"""Distribution Focal Loss (DFL) is a variant of `Generalized Focal Loss:
     Learning Qualified and Distributed Bounding Boxes for Dense Object
     Detection <https://arxiv.org/abs/2006.04388>`_.
@@ -183,7 +183,7 @@ class KDDistributionFocalLoss(nn.Module):
         loss_weight (float): Loss weight of current loss.
     """
     def __init__(self, reduction='mean', loss_weight=1.0, T=2, alpha=1, beta=1):
-        super(KDDistributionFocalLoss, self).__init__()
+        super(LDLoss, self).__init__()
         self.reduction = reduction
         self.loss_weight = loss_weight
 

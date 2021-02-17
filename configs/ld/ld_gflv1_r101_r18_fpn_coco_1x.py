@@ -71,13 +71,14 @@ model = dict(
         add_extra_convs='on_output',
         num_outs=5),
     bbox_head=dict(
-        type='KDGFLHead',
+        type='LDGFLHead',
         num_classes=80,
         in_channels=256,
         stacked_convs=4,
         feat_channels=256,
         teacher_config='configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py',
-        teacher_model='gfl_r101_fpn_mstrain_2x_coco_20200629_200126-dd12f847.pth',
+        teacher_model=
+        'gfl_r101_fpn_mstrain_2x_coco_20200629_200126-dd12f847.pth',
         anchor_generator=dict(
             type='AnchorGenerator',
             ratios=[1.0],
@@ -89,8 +90,7 @@ model = dict(
             use_sigmoid=True,
             beta=2.0,
             loss_weight=1.0),
-        loss_dfl=dict(type='KDDistributionFocalLoss',
-                      loss_weight=0.25, T=10, alpha=1),
+        loss_dfl=dict(type='LDLoss', loss_weight=0.25, T=10, alpha=1),
         reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 # training and testing settings

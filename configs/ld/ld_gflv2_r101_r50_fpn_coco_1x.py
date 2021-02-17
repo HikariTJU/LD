@@ -22,7 +22,7 @@ model = dict(
         add_extra_convs='on_output',
         num_outs=5),
     bbox_head=dict(
-        type='KDGFocalHead',
+        type='LDGFLv2Head',
         num_classes=80,
         in_channels=256,
         stacked_convs=4,
@@ -40,8 +40,7 @@ model = dict(
             use_sigmoid=False,
             beta=2.0,
             loss_weight=1.0),
-        loss_dfl=dict(type='KDDistributionFocalLoss',
-                      loss_weight=0.25, T=10, alpha=1),
+        loss_dfl=dict(type='LDLoss', loss_weight=0.25, T=10, alpha=1),
         reg_max=16,
         reg_topk=4,
         reg_channels=64,
@@ -68,7 +67,6 @@ optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
 #    weight_decay=0.0001,
 #    paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.))
 
-
 # learning policy
 lr_config = dict(step=[8, 11])
 total_epochs = 12
@@ -91,7 +89,6 @@ train_pipeline = [
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
 data = dict(train=dict(pipeline=train_pipeline))
-
 
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
