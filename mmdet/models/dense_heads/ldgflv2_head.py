@@ -345,14 +345,14 @@ class LDGFLv2Head(AnchorHead):
                 avg_factor=1.0)
 
             # dfl loss
-            loss_dfl, loss_kd = self.loss_dfl(
+            loss_dfl, loss_ld = self.loss_dfl(
                 pred_corners,
                 target_corners,
                 soft_corners,
                 weight=weight_targets[:, None].expand(-1, 4).reshape(-1),
                 avg_factor=4.0)
         else:
-            loss_kd = bbox_pred.sum() * 0
+            loss_ld = bbox_pred.sum() * 0
 
             loss_bbox = bbox_pred.sum() * 0
             loss_dfl = bbox_pred.sum() * 0
@@ -364,7 +364,7 @@ class LDGFLv2Head(AnchorHead):
             weight=label_weights,
             avg_factor=num_total_samples)
 
-        return loss_cls, loss_bbox, loss_dfl, loss_kd, weight_targets.sum()
+        return loss_cls, loss_bbox, loss_dfl, loss_ld, weight_targets.sum()
 
     def forward_train(self,
                       x,
@@ -465,7 +465,7 @@ class LDGFLv2Head(AnchorHead):
             torch.tensor(num_total_pos).cuda()).item()
         num_total_samples = max(num_total_samples, 1.0)
 
-        losses_cls, losses_bbox, losses_dfl, loss_kd,\
+        losses_cls, losses_bbox, losses_dfl, loss_ld,\
             avg_factor = multi_apply(
                 self.loss_single,
                 anchor_list,
@@ -486,7 +486,7 @@ class LDGFLv2Head(AnchorHead):
             loss_cls=losses_cls,
             loss_bbox=losses_bbox,
             loss_dfl=losses_dfl,
-            loss_kd=loss_kd)
+            loss_ld=loss_ld)
 
     def _get_bboxes_single(self,
                            cls_scores,
