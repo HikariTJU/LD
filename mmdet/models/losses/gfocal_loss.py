@@ -77,11 +77,11 @@ def distribution_focal_loss(pred, label):
 
 
 @weighted_loss
-def kd_distribution_focal_loss(pred, label, soft_label, T):
-    kd_loss = F.kl_div(F.log_softmax(pred / T, dim=1), F.softmax(soft_label / T, dim=1).detach(),
+def ld_distribution_focal_loss(pred, label, soft_label, T):
+    ld_loss = F.kl_div(F.log_softmax(pred / T, dim=1), F.softmax(soft_label / T, dim=1).detach(),
                        reduction='none').mean(1) * (T * T)
 
-    return kd_loss
+    return ld_loss
 
 
 @LOSSES.register_module()
@@ -213,8 +213,8 @@ class LDLoss(nn.Module):
 
         reduction = (reduction_override if reduction_override else self.reduction)
 
-        loss_kd = self.loss_weight * kd_distribution_focal_loss(
+        loss_ld = self.loss_weight * ld_distribution_focal_loss(
             pred, target, weight, reduction=reduction, avg_factor=avg_factor, soft_label=soft_corners, T=self.T)
         loss_cls = self.loss_weight * distribution_focal_loss(
             pred, target, weight, reduction=reduction, avg_factor=avg_factor)
-        return self.beta * loss_cls, self.alpha * loss_kd
+        return self.beta * loss_cls, self.alpha * loss_ld
