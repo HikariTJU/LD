@@ -179,7 +179,7 @@ AP:  0.530091167986393
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
 ## Score voting Cluster-DIoU-NMS
-We provide Score voting Cluster-DIoU-NMS which is a speed up version of score voting NMS and combination with DIoU-NMS. For GFocalV1 and GFocalV2, Score voting Cluster-DIoU-NMS will bring 0.1-0.3 AP increase, 0.2-0.5 AP75 increase, <=0.4 AP50 decrease and <=1.5 FPS decrease, while it is much faster than score voting NMS in mmdetection. The relevant portion of the config file would be:
+We provide Score voting [Cluster-DIoU-NMS](https://github.com/Zzh-tju/CIoU) which is a speed up version of score voting NMS and combination with DIoU-NMS. For GFocalV1 and GFocalV2, Score voting Cluster-DIoU-NMS will bring 0.1-0.3 AP increase, 0.2-0.5 AP75 increase, <=0.4 AP50 decrease and <=1.5 FPS decrease, while it is much faster than score voting NMS in mmdetection. The relevant portion of the config file would be:
 
 ```
 # Score voting Cluster-DIoU-NMS
