@@ -3,7 +3,7 @@
 ### This repo is based on mmDetection.
 
 This is the code for our paper:
- - [Localization Distillation for Object Detection](https://arxiv.org/abs/1911.08287)
+ - [Localization Distillation for Object Detection](https://arxiv.org/abs/2102.12252))
 
 LD is the extension of knowledge distillation on localization task, which utilizes the learned bbox distributions to transfer the localization dark knowledge from teacher to student.
 
@@ -73,42 +73,42 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 ./tools/dist_test.sh configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py work_dirs/ld_gflv1_r101_r50_fpn_coco_1x/epoch_24.pth 8 --eval bbox
 ```
 ### GFocalV1 with LD
-| Teacher | Student | Training schedule | Mini-batch size | AP (val)| AP50 (val) | AP75 (val) | AP (test-dev)| AP50 (test-dev) | AP75 (test-dev)| AR100 (test-dev)|
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|   --  | R-18 | 1x | 6 |  35.8  |  53.1  |  38.2  |  36.0  |  53.4  |  38.7  |  55.3  |
-| R-101 | R-18 | 1x | 6 |  36.5  |  52.9  |  39.3  |  36.8  |  53.5  |  39.9  |  56.6  |
-|   --  | R-34 | 1x | 6 |  38.9  |  56.6  |  42.2  |  39.2  |  56.9  |  42.3  |  58.0  |
-| R-101 | R-34 | 1x | 6 |  39.8  |  56.6  |  43.1  |  40.0  |  57.1  |  43.5  |  59.3  |
-|   --  | R-50 | 1x | 6 |  40.1  |  58.2  |  43.1  |  40.5  |  58.8  |  43.9  |  59.0  |
-| R-101 | R-50 | 1x | 6 |  41.1  |  58.7  |  44.9  |  41.2  |  58.8  |  44.7  |  59.8  |
-|   --  | R-101 | 2x | 6 |  44.6  |  62.9  |  48.4  |  45.0  |  63.6  |  48.9  |  62.3  |
-| R-101-DCN | R-101 | 2x | 6 |  45.4  |  63.1  |  49.5  |  45.6  |  63.7  |  49.8  |  63.3  |
+|  Teacher  | Student | Training schedule | Mini-batch size | AP (val) | AP50 (val) | AP75 (val) | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
+| :-------: | :-----: | :---------------: | :-------------: | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: | :--------------: |
+|    --     |  R-18   |        1x         |        6        |   35.8   |    53.1    |    38.2    |     36.0      |      53.4       |      38.7       |       55.3       |
+|   R-101   |  R-18   |        1x         |        6        |   36.5   |    52.9    |    39.3    |     36.8      |      53.5       |      39.9       |       56.6       |
+|    --     |  R-34   |        1x         |        6        |   38.9   |    56.6    |    42.2    |     39.2      |      56.9       |      42.3       |       58.0       |
+|   R-101   |  R-34   |        1x         |        6        |   39.8   |    56.6    |    43.1    |     40.0      |      57.1       |      43.5       |       59.3       |
+|    --     |  R-50   |        1x         |        6        |   40.1   |    58.2    |    43.1    |     40.5      |      58.8       |      43.9       |       59.0       |
+|   R-101   |  R-50   |        1x         |        6        |   41.1   |    58.7    |    44.9    |     41.2      |      58.8       |      44.7       |       59.8       |
+|    --     |  R-101  |        2x         |        6        |   44.6   |    62.9    |    48.4    |     45.0      |      63.6       |      48.9       |       62.3       |
+| R-101-DCN |  R-101  |        2x         |        6        |   45.4   |    63.1    |    49.5    |     45.6      |      63.7       |      49.8       |       63.3       |
 
 ### GFocalV1 with Self-LD
 
-| Teacher | Student | Training schedule | Mini-batch size | AP (val)| AP50 (val) | AP75 (val)|
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|
-|  --    | R-18 | 1x | 6 |  35.8  |  53.1  |  38.2  |
-| R-18  | R-18 | 1x | 6 |  36.1  |  52.9  |  38.5  |
-|  --    | R-50 | 1x | 6 |  40.1  |  58.2  |  43.1  |
-| R-50  | R-50 | 1x | 6 |  40.6  |  58.2  |  43.8  |
-|  --    | X-101-32x4d-DCN | 1x | 4 |  46.9  |  65.4  |  51.1  |
-| X-101-32x4d-DCN | X-101-32x4d-DCN | 1x | 4 |  47.5 |  65.8  |  51.8  |
+|     Teacher     |     Student     | Training schedule | Mini-batch size | AP (val) | AP50 (val) | AP75 (val) |
+| :-------------: | :-------------: | :---------------: | :-------------: | :------: | :--------: | :--------: |
+|       --        |      R-18       |        1x         |        6        |   35.8   |    53.1    |    38.2    |
+|      R-18       |      R-18       |        1x         |        6        |   36.1   |    52.9    |    38.5    |
+|       --        |      R-50       |        1x         |        6        |   40.1   |    58.2    |    43.1    |
+|      R-50       |      R-50       |        1x         |        6        |   40.6   |    58.2    |    43.8    |
+|       --        | X-101-32x4d-DCN |        1x         |        4        |   46.9   |    65.4    |    51.1    |
+| X-101-32x4d-DCN | X-101-32x4d-DCN |        1x         |        4        |   47.5   |    65.8    |    51.8    |
 
 ### GFocalV2 with LD
 
-| Teacher | Student | Training schedule | Mini-batch size | AP (test-dev)| AP50 (test-dev) | AP75 (test-dev)| AR100 (test-dev)|
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|:----:|
-|  --    | R-50 | 2x | 16 |  44.4  |  62.3  |  48.5  |  62.4  |
-| R-101 | R-50 | 2x | 16 |  44.8  |  62.4  |  49.0  |  63.1  |
-|  --    | R-101 | 2x | 16 |  46.0  |  64.1  |  50.2  |  63.5  |
-| R-101-DCN| R-101 | 2x | 16 |  46.8  |  64.5  |  51.1  |  64.3  |
-|  --    | R-101-DCN | 2x | 16 |  48.2  |  66.6  |  52.6  |  64.4  |
-| R2-101-DCN| R-101-DCN | 2x | 16 |  49.1  |  67.1  |  53.7  |  65.6  |
-|  --    | X-101-32x4d-DCN | 2x | 16 |  49.0  |  67.6  |  53.4  |  64.7  |
-| R2-101-DCN| X-101-32x4d-DCN | 2x | 16 |  50.2  |  68.3  |  54.9  |  66.3  |
-|  --    | R2-101-DCN | 2x | 16 |  50.5  |  68.9  |  55.1  |  66.2  |
-| R2-101-DCN| R2-101-DCN | 2x | 16 |  51.0  |  69.1  |  55.9  |  66.8  |
+|  Teacher   |     Student     | Training schedule | Mini-batch size | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
+| :--------: | :-------------: | :---------------: | :-------------: | :-----------: | :-------------: | :-------------: | :--------------: |
+|     --     |      R-50       |        2x         |       16        |     44.4      |      62.3       |      48.5       |       62.4       |
+|   R-101    |      R-50       |        2x         |       16        |     44.8      |      62.4       |      49.0       |       63.1       |
+|     --     |      R-101      |        2x         |       16        |     46.0      |      64.1       |      50.2       |       63.5       |
+| R-101-DCN  |      R-101      |        2x         |       16        |     46.8      |      64.5       |      51.1       |       64.3       |
+|     --     |    R-101-DCN    |        2x         |       16        |     48.2      |      66.6       |      52.6       |       64.4       |
+| R2-101-DCN |    R-101-DCN    |        2x         |       16        |     49.1      |      67.1       |      53.7       |       65.6       |
+|     --     | X-101-32x4d-DCN |        2x         |       16        |     49.0      |      67.6       |      53.4       |       64.7       |
+| R2-101-DCN | X-101-32x4d-DCN |        2x         |       16        |     50.2      |      68.3       |      54.9       |       66.3       |
+|     --     |   R2-101-DCN    |        2x         |       16        |     50.5      |      68.9       |      55.1       |       66.2       |
+| R2-101-DCN |   R2-101-DCN    |        2x         |       16        |     51.0      |      69.1       |      55.9       |       66.8       |
 
 ## VOC Evaluation
 
@@ -118,16 +118,16 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 ### GFocalV1 with LD
 
-| Teacher | Student | Training Epochs | Mini-batch size | AP | AP50 | AP75 |
-|:----:|:-------:|:-------:|:----:|:----:|:----:|:----:|
-|  --    | R-18 | 4 | 6 |  51.8  |  75.8  |  56.3  |
-| R-101  | R-18 | 4 | 6 |  53.0  |  75.9  |  57.6  | 
-|  --    | R-50 | 4 | 6 |  55.8  |  79.0  |  60.7  |
-| R-101| R-50 | 4 | 6 |  56.1  |  78.5  |  61.2  |
-|  --    | R-34 | 4 | 6 |  55.7  |  78.9  |  60.6  |
-| R-101-DCN| R-34 | 4 | 6 |  56.7  |  78.4  |  62.1  |
-|  --    | R-101 | 4 | 6 |  57.6  |  80.4  |  62.7  |
-| R-101-DCN| R-101 | 4 | 6 |  58.4  |  80.2  |  63.7  |
+|  Teacher  | Student | Training Epochs | Mini-batch size |  AP   | AP50  | AP75  |
+| :-------: | :-----: | :-------------: | :-------------: | :---: | :---: | :---: |
+|    --     |  R-18   |        4        |        6        | 51.8  | 75.8  | 56.3  |
+|   R-101   |  R-18   |        4        |        6        | 53.0  | 75.9  | 57.6  |
+|    --     |  R-50   |        4        |        6        | 55.8  | 79.0  | 60.7  |
+|   R-101   |  R-50   |        4        |        6        | 56.1  | 78.5  | 61.2  |
+|    --     |  R-34   |        4        |        6        | 55.7  | 78.9  | 60.6  |
+| R-101-DCN |  R-34   |        4        |        6        | 56.7  | 78.4  | 62.1  |
+|    --     |  R-101  |        4        |        6        | 57.6  | 80.4  | 62.7  |
+| R-101-DCN |  R-101  |        4        |        6        | 58.4  | 80.2  | 63.7  |
 
 This is an example of evaluation results (R-101→R-18).
 ```
@@ -166,15 +166,15 @@ AP:  0.530091167986393
  - According to ATSS, there is no gap between box-based regression and point-based regression. **Personal conjectures**: 1) If xywh form is able to work when using general distribution (apply uniform subinterval division for xywh), our LD can also work in xywh form. 2) If xywh form with general distribution cannot obtain better result, then the best modification is to firstly switch xywh form to tblr form and then apply general distribution and LD. **Consequently**, whether xywh form + general distribution works or not, our LD benefits for all the regression-based detector.
 
 ## Pretrained weights
-| VOC | COCO |
-|:----:|:----:|
-|[GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | [GFocalV1 + LD R101_R18_1x pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d |
-|[GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra | [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
-|[GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 |[GFocalV2 + LD R101_R50_2x pan.baidu](https://pan.baidu.com/s/1WA8KLmz-_aWp07Rqw50qXg) pw: 3jtq |
-|[GFocalV1 + LD R101DCN_R34 pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw |[GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
-|[GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm |
-|| [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc|
-|| [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn|
+|                                               VOC                                                |                                                COCO                                                 |
+| :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
+|   [GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8    |   [GFocalV1 + LD R101_R18_1x pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d   |
+|  [GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra  |   [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz   |
+|   [GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3   |   [GFocalV2 + LD R101_R50_2x pan.baidu](https://pan.baidu.com/s/1WA8KLmz-_aWp07Rqw50qXg) pw: 3jtq   |
+| [GFocalV1 + LD R101DCN_R34 pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw  | [GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
+| [GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm  |
+|                                                                                                  |   [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc   |
+|                                                                                                  | [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn |
 
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
@@ -199,7 +199,7 @@ If you find LD useful in your research, please consider citing:
 @Article{zheng2021LD,
   title={Localization Distillation for Object Detection},
   author= {Zhaohui Zheng, Rongguang Ye, Ping Wang, Jun Wang, Dongwei Ren},
-  journal={arXiv:2005.03572},
+  journal={arXiv:2102.12252},
   year={2021}
 }
 ```
