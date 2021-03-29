@@ -56,10 +56,7 @@ data = dict(
 
 ## Convert model
 
-After training with LD, the weight file `.pth` will be large. You'd better convert the model to save a new small one. See [convert_model.py#L38-L40](convert_model.py#L38-L40), you can set them to your `.pth` file and config file. Then, run
-```python
-python convert_model.py
-```
+If you find trained model very large, please refer to [publish_model.py](tools/publish_model.py)
 
 ## Speed Test (FPS)
 
