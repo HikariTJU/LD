@@ -5,6 +5,11 @@
 This is the code for our paper:
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/2102.12252))
 
+[2021.3.30] GFocal is officially included in [MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), many thanks to [@jshilong
+
+](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang) and [@ZwwWayne](https://github.com/ZwwWayne) for helping migrating the code.
+
+
 LD is the extension of knowledge distillation on localization task, which utilizes the learned bbox distributions to transfer the localization dark knowledge from teacher to student.
 
 LD stably improves over GFocalV1 about ~0.8 AP and ~1 AR100 without adding any computational cost! 
