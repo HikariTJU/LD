@@ -22,7 +22,7 @@ Knowledge distillation (KD) has witnessed its powerful ability in learning compa
 
 ## Installation
 
-Please refer to [INSTALL.md](docs/install.md) for installation and dataset preparation.
+Please refer to [INSTALL.md](docs/install.md) for installation and dataset preparation. Pytorch=1.5.1 and cudatoolkits=10.1 are recommended.
 
 ## Get Started
 
