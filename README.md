@@ -22,11 +22,11 @@ Knowledge distillation (KD) has witnessed its powerful ability in learning compa
 
 ## Installation
 
-Please refer to [INSTALL.md](docs/INSTALL.md) for installation and dataset preparation.
+Please refer to [INSTALL.md](docs/install.md) for installation and dataset preparation.
 
 ## Get Started
 
-Please see [GETTING_STARTED.md](docs/GETTING_STARTED.md) for the basic usage of MMDetection.
+Please see [GETTING_STARTED.md](docs/getting_started.md) for the basic usage of MMDetection.
 
 ## Train
 
