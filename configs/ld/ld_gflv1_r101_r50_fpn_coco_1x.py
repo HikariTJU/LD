@@ -30,7 +30,7 @@ model = dict(
         feat_channels=256,
         teacher_config='configs/gfl/gfl_r101_fpn_mstrain_2x_coco.py',
         teacher_model=
-        'gfl_r101_fpn_mstrain_2x_coco_20200629_200126-dd12f847.pth',
+        'gfl_r101_fpn_mstrain_2x_coco.pth',
         anchor_generator=dict(
             type='AnchorGenerator',
             ratios=[1.0],
@@ -43,7 +43,7 @@ model = dict(
             beta=2.0,
             loss_weight=1.0),
         loss_dfl=dict(type='LDLoss', loss_weight=0.25, T=10, alpha=1),
-        reg_max=64,
+        reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 
 # training and testing settings
