@@ -199,7 +199,7 @@ If you find LD useful in your research, please consider citing:
 ```
 @Article{zheng2021LD,
   title={Localization Distillation for Object Detection},
-  author= {Zhaohui Zheng, Rongguang Ye, Ping Wang, Jun Wang, Dongwei Ren, Wangmeng Zuo},
+  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Mingming},
   journal={arXiv:2102.12252},
   year={2021}
 }
