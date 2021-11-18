@@ -60,7 +60,11 @@ def parse_args():
         nargs='+',
         action=DictAction,
         help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file.')
+        'in xxx=yyy format will be merged into config file. If the value to '
+        'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
+        'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
+        'Note that the quotation marks are necessary and that no white space '
+        'is allowed.')
     parser.add_argument(
         '--options',
         nargs='+',
@@ -131,11 +135,22 @@ def main():
                 cfg.model.neck.rfp_backbone.pretrained = None
 
     # in case the test dataset is concatenated
+    samples_per_gpu = 1
     if isinstance(cfg.data.test, dict):
         cfg.data.test.test_mode = True
+        samples_per_gpu = cfg.data.test.pop('samples_per_gpu', 1)
+        if samples_per_gpu > 1:
+            # Replace 'ImageToTensor' to 'DefaultFormatBundle'
+            cfg.data.test.pipeline = replace_ImageToTensor(
+                cfg.data.test.pipeline)
     elif isinstance(cfg.data.test, list):
         for ds_cfg in cfg.data.test:
             ds_cfg.test_mode = True
+        samples_per_gpu = max(
+            [ds_cfg.pop('samples_per_gpu', 1) for ds_cfg in cfg.data.test])
+        if samples_per_gpu > 1:
+            for ds_cfg in cfg.data.test:
+                ds_cfg.pipeline = replace_ImageToTensor(ds_cfg.pipeline)
 
     # init distributed env first, since logger depends on the dist info.
     if args.launcher == 'none':
@@ -145,10 +160,6 @@ def main():
         init_dist(args.launcher, **cfg.dist_params)
 
     # build the dataloader
-    samples_per_gpu = cfg.data.test.pop('samples_per_gpu', 1)
-    if samples_per_gpu > 1:
-        # Replace 'ImageToTensor' to 'DefaultFormatBundle'
-        cfg.data.test.pipeline = replace_ImageToTensor(cfg.data.test.pipeline)
     dataset = build_dataset(cfg.data.test)
     data_loader = build_dataloader(
         dataset,
@@ -158,7 +169,8 @@ def main():
         shuffle=False)
 
     # build the model and load checkpoint
-    model = build_detector(cfg.model, train_cfg=None, test_cfg=cfg.test_cfg)
+    cfg.model.train_cfg = None
+    model = build_detector(cfg.model, test_cfg=cfg.get('test_cfg'))
     fp16_cfg = cfg.get('fp16', None)
     if fp16_cfg is not None:
         wrap_fp16_model(model)
@@ -167,7 +179,7 @@ def main():
         model = fuse_conv_bn(model)
     # old versions did not save class info in checkpoints, this walkaround is
     # for backward compatibility
-    if 'CLASSES' in checkpoint['meta']:
+    if 'CLASSES' in checkpoint.get('meta', {}):
         model.CLASSES = checkpoint['meta']['CLASSES']
     else:
         model.CLASSES = dataset.CLASSES
@@ -195,7 +207,10 @@ def main():
         if args.eval:
             eval_kwargs = cfg.get('evaluation', {}).copy()
             # hard-code way to remove EvalHook args
-            for key in ['interval', 'tmpdir', 'start', 'gpu_collect']:
+            for key in [
+                    'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
+                    'rule'
+            ]:
                 eval_kwargs.pop(key, None)
             eval_kwargs.update(dict(metric=args.eval, **kwargs))
             print(dataset.evaluate(outputs, **eval_kwargs))

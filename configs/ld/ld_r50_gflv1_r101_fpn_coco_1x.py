@@ -32,7 +32,6 @@ model = dict(
         loss_cls=dict(
             type='QualityFocalLoss',
             use_sigmoid=True,
-
             beta=2.0,
             loss_weight=1.0),
         loss_dfl=dict(type='DistributionFocalLoss', loss_weight=0.25),
@@ -40,6 +39,7 @@ model = dict(
             type='KnowledgeDistillationKLDivLoss', loss_weight=0.25, T=10),
         loss_kd=dict(
             type='KnowledgeDistillationKLDivLoss', loss_weight=5, T=2),
+        loss_im=dict(type='IMLoss', loss_weight=2.0),
         reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 data = dict(
