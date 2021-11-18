@@ -200,19 +200,21 @@ class GFocalHead(AnchorHead):
 
         bbox_pred = scale(self.gfl_reg(reg_feat)).float()
         N, C, H, W = bbox_pred.size()
-        prob = F.softmax(bbox_pred.reshape(N, 4, self.reg_max+1, H, W), dim=2)
+        prob = F.softmax(
+            bbox_pred.reshape(N, 4, self.reg_max + 1, H, W), dim=2)
         prob_topk, _ = prob.topk(self.reg_topk, dim=2)
 
         if self.add_mean:
-            stat = torch.cat([prob_topk, prob_topk.mean(dim=2, keepdim=True)],
-                             dim=2)
+            stat = torch.cat(
+                [prob_topk, prob_topk.mean(dim=2, keepdim=True)], dim=2)
         else:
             stat = prob_topk
 
+        cls_feat = self.gfl_cls(cls_feat)
         quality_score = self.reg_conf(stat.reshape(N, -1, H, W))
-        cls_score = self.gfl_cls(cls_feat).sigmoid() * quality_score
+        cls_score = cls_feat.sigmoid() * quality_score
 
-        return cls_score, bbox_pred
+        return cls_score, bbox_pred, cls_feat
 
     def anchor_center(self, anchors):
         """Get anchor centers from anchors.
@@ -311,6 +313,95 @@ class GFocalHead(AnchorHead):
 
         return loss_cls, loss_bbox, loss_dfl, weight_targets.sum()
 
+    @force_fp32(apply_to=('cls_scores', 'bbox_preds'))
+    def get_bboxes(self,
+                   cls_scores,
+                   bbox_preds,
+                   cls_feat,
+                   img_metas,
+                   cfg=None,
+                   rescale=False,
+                   with_nms=True):
+        """Transform network output for a batch into bbox predictions.
+        Args:
+            cls_scores (list[Tensor]): Box scores for each scale level
+                Has shape (N, num_anchors * num_classes, H, W)
+            bbox_preds (list[Tensor]): Box energies / deltas for each scale
+                level with shape (N, num_anchors * 4, H, W)
+            img_metas (list[dict]): Meta information of each image, e.g.,
+                image size, scaling factor, etc.
+            cfg (mmcv.Config | None): Test / postprocessing configuration,
+                if None, test_cfg would be used
+            rescale (bool): If True, return boxes in original image space.
+                Default: False.
+            with_nms (bool): If True, do nms before return boxes.
+                Default: True.
+        Returns:
+            list[tuple[Tensor, Tensor]]: Each item in result_list is 2-tuple.
+                The first item is an (n, 5) tensor, where the first 4 columns
+                are bounding box positions (tl_x, tl_y, br_x, br_y) and the
+                5-th column is a score between 0 and 1. The second item is a
+                (n,) tensor where each item is the predicted class labelof the
+                corresponding box.
+        Example:
+            >>> import mmcv
+            >>> self = AnchorHead(
+            >>>     num_classes=9,
+            >>>     in_channels=1,
+            >>>     anchor_generator=dict(
+            >>>         type='AnchorGenerator',
+            >>>         scales=[8],
+            >>>         ratios=[0.5, 1.0, 2.0],
+            >>>         strides=[4,]))
+            >>> img_metas = [{'img_shape': (32, 32, 3), 'scale_factor': 1}]
+            >>> cfg = mmcv.Config(dict(
+            >>>     score_thr=0.00,
+            >>>     nms=dict(type='nms', iou_thr=1.0),
+            >>>     max_per_img=10))
+            >>> feat = torch.rand(1, 1, 3, 3)
+            >>> cls_score, bbox_pred = self.forward_single(feat)
+            >>> # note the input lists are over different levels, not images
+            >>> cls_scores, bbox_preds = [cls_score], [bbox_pred]
+            >>> result_list = self.get_bboxes(cls_scores, bbox_preds,
+            >>>                               img_metas, cfg)
+            >>> det_bboxes, det_labels = result_list[0]
+            >>> assert len(result_list) == 1
+            >>> assert det_bboxes.shape[1] == 5
+            >>> assert len(det_bboxes) == len(det_labels) == cfg.max_per_img
+        """
+        assert len(cls_scores) == len(bbox_preds)
+        num_levels = len(cls_scores)
+
+        device = cls_scores[0].device
+        featmap_sizes = [cls_scores[i].shape[-2:] for i in range(num_levels)]
+        mlvl_anchors = self.anchor_generator.grid_anchors(
+            featmap_sizes, device=device)
+
+        result_list = []
+        for img_id in range(len(img_metas)):
+            cls_score_list = [
+                cls_scores[i][img_id].detach() for i in range(num_levels)
+            ]
+            bbox_pred_list = [
+                bbox_preds[i][img_id].detach() for i in range(num_levels)
+            ]
+            img_shape = img_metas[img_id]['img_shape']
+            scale_factor = img_metas[img_id]['scale_factor']
+            if with_nms:
+                # some heads don't support with_nms argument
+                proposals = self._get_bboxes_single(cls_score_list,
+                                                    bbox_pred_list,
+                                                    mlvl_anchors, img_shape,
+                                                    scale_factor, cfg, rescale)
+            else:
+                proposals = self._get_bboxes_single(cls_score_list,
+                                                    bbox_pred_list,
+                                                    mlvl_anchors, img_shape,
+                                                    scale_factor, cfg, rescale,
+                                                    with_nms)
+            result_list.append(proposals)
+        return result_list
+
     def forward_train(self,
                       x,
                       img_metas,
@@ -333,7 +424,6 @@ class GFocalHead(AnchorHead):
                 ignored, shape (num_ignored_gts, 4).
             proposal_cfg (mmcv.Config): Test / postprocessing configuration,
                 if None, test_cfg would be used
-
         Returns:
             tuple:
                 losses: (dict[str, Tensor]): A dictionary of loss components.
@@ -355,6 +445,7 @@ class GFocalHead(AnchorHead):
     def loss(self,
              cls_scores,
              bbox_preds,
+             cls_feat,
              gt_bboxes,
              gt_labels,
              img_metas,
@@ -401,7 +492,7 @@ class GFocalHead(AnchorHead):
          bbox_weights_list, num_total_pos, num_total_neg) = cls_reg_targets
 
         num_total_samples = reduce_mean(
-            torch.tensor(num_total_pos).cuda()).item()
+            torch.tensor(num_total_pos, dtype=torch.float).cuda()).item()
         num_total_samples = max(num_total_samples, 1.0)
 
         losses_cls, losses_bbox, losses_dfl,\
@@ -470,8 +561,8 @@ class GFocalHead(AnchorHead):
             assert cls_score.size()[-2:] == bbox_pred.size()[-2:]
             assert stride[0] == stride[1]
 
-            scores = cls_score.permute(1, 2, 0).reshape(
-                -1, self.cls_out_channels)
+            scores = cls_score.permute(1, 2,
+                                       0).reshape(-1, self.cls_out_channels)
             bbox_pred = bbox_pred.permute(1, 2, 0)
             bbox_pred = self.integral(bbox_pred) * stride[0]
 
@@ -627,7 +718,7 @@ class GFocalHead(AnchorHead):
             num_level_anchors, inside_flags)
         assign_result = self.assigner.assign(anchors, num_level_anchors_inside,
                                              gt_bboxes, gt_bboxes_ignore,
-                                             gt_labels)
+                                             gt_labels)[0]
 
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)

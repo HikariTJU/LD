@@ -280,6 +280,9 @@ class YOLACTHead(AnchorHead):
         loss_cls_neg = topk_loss_cls_neg.sum()
         loss_cls = (loss_cls_pos + loss_cls_neg) / num_total_samples
         if self.reg_decoded_bbox:
+            # When the regression loss (e.g. `IouLoss`, `GIouLoss`)
+            # is applied directly on the decoded bounding boxes, it
+            # decodes the already encoded coordinates to absolute format.
             bbox_pred = self.bbox_coder.decode(anchors, bbox_pred)
         loss_bbox = self.loss_bbox(
             bbox_pred,
@@ -928,12 +931,12 @@ class InterpolateModule(nn.Module):
     Any arguments you give it just get passed along for the ride.
     """
 
-    def __init__(self, *args, **kwdargs):
+    def __init__(self, *args, **kwargs):
         super().__init__()
 
         self.args = args
-        self.kwdargs = kwdargs
+        self.kwargs = kwargs
 
     def forward(self, x):
         """Forward features from the upstream network."""
-        return F.interpolate(x, *self.args, **self.kwdargs)
+        return F.interpolate(x, *self.args, **self.kwargs)

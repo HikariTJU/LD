@@ -63,23 +63,27 @@ class VOCDataset(XMLDataset):
                 ds_name = 'voc07'
             else:
                 ds_name = self.CLASSES
-            total_ap=0
-            map=[]
+            total_ap = 0
+            # total_map=0
+            map = []
             for iii in range(10):
                 mean_ap, _ = eval_map(
-                results,
-                annotations,
-                scale_ranges=None,
-                iou_thr=iou_thr,
-                dataset=ds_name,
-                logger=logger)
-                total_map=mean_ap+total_map
-                iou_thr=iou_thr+0.05
-                total_ap=mean_ap+total_ap
-                if iii==0:
+                    results,
+                    annotations,
+                    scale_ranges=None,
+                    iou_thr=iou_thr,
+                    dataset=ds_name,
+                    logger=logger)
+                # total_map=mean_ap+total_map
+                iou_thr = iou_thr + 0.05
+                total_ap = mean_ap + total_ap
+                if iii == 0:
                     eval_results['mAP'] = mean_ap
-                map.append('AP'+str(int(50+5*iii))+': '+str(format(mean_ap, '.6f')))
-            print('AP: ', total_ap/10)
+                map.append('AP' + str(int(50 + 5 * iii)) + ': ' +
+                           str(format(mean_ap, '.6f')))
+            print('AP: ', total_ap / 10)
+            map.append('AP' +  ': ' + str(format(total_ap/10, '.6f')))
+
             print(map)
         elif metric == 'recall':
             gt_bboxes = [ann['bboxes'] for ann in annotations]
