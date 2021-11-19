@@ -457,10 +457,9 @@ class LDATSSHead(ATSSGFLHead):
         num_level_anchors_inside = self.get_num_level_anchors_inside(
             num_level_anchors, inside_flags)
 
-        assign_result = self.assigner.assign_pos(anchors,
-                                                 num_level_anchors_inside,
-                                                 gt_bboxes, gt_bboxes_ignore,
-                                                 gt_labels)
+        assign_result = self.assigner.assign(anchors, num_level_anchors_inside,
+                                             gt_bboxes, gt_bboxes_ignore,
+                                             gt_labels)
 
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)

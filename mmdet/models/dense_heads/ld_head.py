@@ -4,6 +4,7 @@ from mmcv.runner import force_fp32
 from mmdet.core import (bbox2distance, bbox_overlaps, distance2bbox,
                         images_to_levels, anchor_inside_flags, unmap,
                         multi_apply, reduce_mean)
+from mmdet.core.bbox.iou_calculators import build_iou_calculator
 from ..builder import HEADS, build_loss
 from .gfl_head import GFLHead
 
@@ -54,11 +55,15 @@ class LDHead(GFLHead):
                      type='KnowledgeDistillationKLDivLoss',
                      loss_weight=0.5,
                      T=10),
+                 imitation_method='gibox',
                  **kwargs):
         super(LDHead, self).__init__(num_classes, in_channels, **kwargs)
+        self.imitation_method = imitation_method
         self.loss_im = build_loss(loss_im)
         self.loss_ld = build_loss(loss_ld)
         self.loss_kd = build_loss(loss_kd)
+        self.iou_calculator = build_iou_calculator(
+            dict(type='BboxOverlaps2D'), )
 
     def forward_train(self,
                       x,
@@ -105,8 +110,7 @@ class LDHead(GFLHead):
 
     def loss_single(self, anchors, cls_score, bbox_pred, labels, label_weights,
                     bbox_targets, stride, soft_targets, soft_label, x,
-                    teacher_x, assigned_neg, assigned_fg, num_total_samples,
-                    num_total_samples_neg):
+                    teacher_x, vlr_region, im_region, num_total_samples):
         """Compute loss of a single scale level.
 
         Args:
@@ -141,59 +145,14 @@ class LDHead(GFLHead):
                                                        4 * (self.reg_max + 1))
         soft_label = soft_label.permute(0, 2, 3,
                                         1).reshape(-1, self.cls_out_channels)
-
-        # ------------------feature imitation based on GI locations----------------
-        '''
-        teacher_score = soft_label.sigmoid()
-
-        student_score = cls_score.detach().sigmoid()  #[num,80]
-
-        anchor_centers = self.anchor_center(anchors) / stride[0]
-        sdistribution = self.integral(bbox_pred)
-        tdistribution = self.integral(soft_targets)
-        sbox = distance2bbox(anchor_centers, sdistribution)  #[num,4]
-        tbox = distance2bbox(anchor_centers, tdistribution)
-
-        z = teacher_score - student_score  #difference between teacher score and student score on the whole locations.
-        giscore, index = torch.abs(z).max(dim=1)  #GI scores
-        k = z >= 0  #who is bigger
-        j = torch.take(
-            k, index + self.cls_out_channels *
-            (torch.arange(student_score.size(0)).cuda()))
-        h = j == 0
-        gibox = sbox.new_zeros(sbox.shape)
-        gibox[j] = tbox[j] + 0
-        gibox[h] = sbox[h] + 0  #GI boxes
-
-        idx_out = torch.ops.torchvision.nms(gibox, giscore, 0.3)[:10]
-        # Cluster-NMS
-        
-        _, idx = giscore.sort(0, descending=True)
-        boxes_idx = gibox[idx]
-        iou= jaccard(boxes_idx, boxes_idx).triu_(diagonal=1)
-        B = iou
-        for i in range(200):
-            A=B
-            maxA,_=torch.max(A, dim=0)
-            E = (maxA<=0.3).float().unsqueeze(1).expand_as(A)
-            B=iou.mul(E)
-            if A.equal(B)==True:
-                break
-        idx_out = idx[maxA <= 0.3][:10]	# the final GI boxes' locations for feature imitation
-        '''
-        #gi_teacher = teacher_x.permute(0, 2, 3, 1).reshape(-1, 256)[idx_out]
-        #gi_student = x.permute(0, 2, 3, 1).reshape(-1, 256)[idx_out]
-
-        #loss_gibox_im = self.loss_im(gi_student, gi_teacher)
-        loss_gibox_im = bbox_pred.sum() * 0
-
-        # ---------------------------------------------------------------
+        teacher_x = teacher_x.permute(0, 2, 3, 1).reshape(-1, 256)
+        x = x.permute(0, 2, 3, 1).reshape(-1, 256)
 
         bbox_targets = bbox_targets.reshape(-1, 4)
         labels = labels.reshape(-1)
         label_weights = label_weights.reshape(-1)
-        assigned_neg = assigned_neg.reshape(-1)
-        assigned_fg = assigned_fg.reshape(-1)
+        vlr_region = vlr_region.reshape(-1)
+        im_region = im_region.reshape(-1)
 
         # FG cat_id: [0, num_classes -1], BG cat_id: num_classes
         bg_class_ind = self.num_classes
@@ -201,23 +160,30 @@ class LDHead(GFLHead):
                     & (labels < bg_class_ind)).nonzero().squeeze(1)
         #gt_inds = (labels != bg_class_ind).nonzero().squeeze(1)
         score = label_weights.new_zeros(labels.shape)
-        teacher_x = teacher_x.permute(0, 2, 3, 1).reshape(-1, 256)
-        x = x.permute(0, 2, 3, 1).reshape(-1, 256)
-        score_neg = assigned_neg.new_zeros(assigned_neg.shape)
-        remain_inds = (assigned_neg > 0).nonzero().squeeze(1)
-        #fg_inds = (assigned_fg > 0).nonzero().squeeze(1)
-        #ng_inds = (assigned_fg == 0).nonzero().squeeze(1)
-        #if len(fg_inds) > 0:
-        #loss_im = self.loss_im(x[fg_inds], teacher_x[fg_inds])
-        #else:
-        #loss_im = bbox_pred.sum() * 0
-        loss_im = self.loss_im(x, teacher_x)
+        remain_inds = (vlr_region > 0).nonzero().squeeze(1)
 
-        # if len(ng_inds) > 0:
-        #     loss_im_neg = 2 * self.loss_im(x[ng_inds], teacher_x[ng_inds])
-        # else:
-        loss_im_neg = bbox_pred.sum() * 0
+        if self.imitation_method == 'gibox':
+            gi_idx = self.get_gi_region(soft_label, cls_score, anchors,
+                                        bbox_pred, soft_targets, stride)
+            gi_teacher = teacher_x[gi_idx]
+            gi_student = x[gi_idx]
 
+            loss_im = self.loss_im(gi_student, gi_teacher)
+        elif self.imitation_method == 'decouple':
+            fg_inds = (im_region > 0).nonzero().squeeze(1)
+            ng_inds = (im_region == 0).nonzero().squeeze(1)
+            if len(fg_inds) > 0:
+                loss_im = self.loss_im(x[fg_inds],
+                                       teacher_x[fg_inds]) + 2 * self.loss_im(
+                                           x[ng_inds], teacher_x[fg_inds])
+            else:
+                loss_im = bbox_pred.sum() * 0
+        else:
+            fg_inds = (im_region > 0).nonzero().squeeze(1)
+            if len(fg_inds) > 0:
+                loss_im = self.loss_im(x[fg_inds], teacher_x[fg_inds])
+            else:
+                loss_im = bbox_pred.sum() * 0
         if len(pos_inds) > 0:
             pos_bbox_targets = bbox_targets[pos_inds]
             pos_bbox_pred = bbox_pred[pos_inds]
@@ -253,7 +219,6 @@ class LDHead(GFLHead):
                 pos_decode_bbox_targets,
                 weight=weight_targets,
                 avg_factor=1.0)
-            # loss_ld = bbox_pred.sum() * 0
             # dfl loss
             loss_dfl = self.loss_dfl(
                 pred_corners,
@@ -262,12 +227,12 @@ class LDHead(GFLHead):
                 avg_factor=4.0)
 
             # ld loss
-            loss_ld = 0 * self.loss_ld(
+            loss_ld = self.loss_ld(
                 pred_corners,
                 soft_corners,
                 weight=weight_targets[:, None].expand(-1, 4).reshape(-1),
                 avg_factor=4.0)
-            loss_cls_kd = 0 * self.loss_kd(
+            loss_cls_kd = self.loss_kd(
                 cls_score[pos_inds],
                 soft_label[pos_inds],
                 weight=label_weights[pos_inds],
@@ -282,61 +247,27 @@ class LDHead(GFLHead):
             weight_targets = bbox_pred.new_tensor(0)
 
         if len(remain_inds) > 0:
-
             neg_pred_corners = bbox_pred[remain_inds].reshape(
                 -1, self.reg_max + 1)
             neg_soft_corners = soft_targets[remain_inds].reshape(
                 -1, self.reg_max + 1)
-            weight_targetss = ((cls_score.detach().sigmoid().max(dim=1)[0]) <
-                               0).float()
-            remain_targets = weight_targetss[remain_inds] + assigned_neg[
-                remain_inds]
 
-            neg_bbox_targets = bbox_targets[remain_inds]
-            neg_bbox_pred = bbox_pred[remain_inds]
-            neg_anchors = anchors[remain_inds]
-            neg_anchor_centers = self.anchor_center(neg_anchors) / stride[0]
-            neg_bbox_pred_corners = self.integral(neg_bbox_pred)
-            neg_decode_bbox_pred = distance2bbox(neg_anchor_centers,
-                                                 neg_bbox_pred_corners)
-            neg_decode_bbox_targets = neg_bbox_targets / stride[0]
+            remain_targets = vlr_region[remain_inds]
 
-            score_neg[remain_inds] = bbox_overlaps(
-                neg_decode_bbox_pred.detach(),
-                neg_decode_bbox_targets,
-                is_aligned=True)
-
-            # print(neg_pred_corners.size())
-            # print(remain_inds[:, None].expand(-1, 4).reshape(-1).size())
-            loss_ld_neg = 0 * self.loss_ld(
+            loss_ld_neg = 0.25 * self.loss_ld(
                 neg_pred_corners,
                 neg_soft_corners,
                 weight=remain_targets[:, None].expand(-1, 4).reshape(-1),
                 avg_factor=4.0)
-
-            # loss_bbox_neg = 0.0 * self.loss_bbox(
-            #     neg_decode_bbox_pred,
-            #     neg_decode_bbox_targets,
-            #     weight=remain_targets,
-            #     avg_factor=1.0)
-            loss_cls_kd_neg = 0 * self.loss_kd(
-                cls_score[remain_inds],
-                soft_label[remain_inds],
-                weight=label_weights[remain_inds],
-                avg_factor=remain_inds.shape[0])
-
         else:
             loss_ld_neg = bbox_pred.sum() * 0
-            loss_cls_kd_neg = bbox_pred.sum() * 0
-
-        # cls (qfl) loss
 
         loss_cls = self.loss_cls(
             cls_score, (labels, score),
             weight=label_weights,
             avg_factor=num_total_samples)
 
-        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_neg, loss_cls_kd, loss_cls_kd_neg, loss_gibox_im, loss_im, loss_im_neg, weight_targets.sum(
+        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_neg, loss_cls_kd, loss_im, weight_targets.sum(
         )
 
     @force_fp32(apply_to=('cls_scores', 'bbox_preds'))
@@ -390,22 +321,17 @@ class LDHead(GFLHead):
             return None
 
         (anchor_list, labels_list, label_weights_list, bbox_targets_list,
-         bbox_weights_list, num_total_pos, num_total_neg, labels_list_neg,
-         label_weights_list_neg, bbox_targets_list_neg, bbox_weights_list_neg,
-         num_total_pos_neg, num_total_neg_neg, assigned_neg_list,
-         assigned_fg_list) = cls_reg_targets
+         bbox_weights_list, num_total_pos, num_total_neg, assigned_neg_list,
+         im_region_list) = cls_reg_targets
 
         num_total_samples = reduce_mean(
             torch.tensor(num_total_pos, dtype=torch.float,
                          device=device)).item()
         num_total_samples = max(num_total_samples, 1.0)
 
-        num_total_samples_neg = reduce_mean(
-            torch.tensor(num_total_pos_neg, dtype=torch.float,
-                         device=device)).item()
-        num_total_samples_neg = max(num_total_samples_neg, 1.0)
 
-        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_neg, losses_cls_kd, losses_cls_kd_neg, losses_gibox_im, losses_im, losses_im_neg,\
+
+        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_neg, losses_cls_kd, losses_im,\
             avg_factor = multi_apply(
                 self.loss_single,
                 anchor_list,
@@ -420,9 +346,9 @@ class LDHead(GFLHead):
                 x,
                 teacher_x,
                 assigned_neg_list,
-                assigned_fg_list,
+                im_region_list,
                 num_total_samples=num_total_samples,
-                num_total_samples_neg=num_total_samples_neg)
+        )
 
         avg_factor = sum(avg_factor) + 1e-6
         avg_factor = reduce_mean(avg_factor).item()
@@ -435,10 +361,8 @@ class LDHead(GFLHead):
             loss_ld=losses_ld,
             loss_ld_neg=losses_ld_neg,
             loss_cls_kd=losses_cls_kd,
-            loss_cls_kd_neg=losses_cls_kd_neg,
-            loss_gibox_im=losses_gibox_im,
             loss_im=losses_im,
-            loss_im_neg=losses_im_neg)
+        )
 
     def get_targets(self,
                     anchor_list,
@@ -473,25 +397,10 @@ class LDHead(GFLHead):
             gt_bboxes_ignore_list = [None for _ in range(num_imgs)]
         if gt_labels_list is None:
             gt_labels_list = [None for _ in range(num_imgs)]
-        '''
+
         (all_anchors, all_labels, all_label_weights, all_bbox_targets,
-         all_bbox_weights, pos_inds_list, neg_inds_list, all_assigned_neg, assigned_neg_inds_list) = multi_apply(
-             self._get_target_single,
-             anchor_list,
-             valid_flag_list,
-             num_level_anchors_list,
-             gt_bboxes_list,
-             gt_bboxes_ignore_list,
-             gt_labels_list,
-             img_metas,
-             label_channels=label_channels,
-             unmap_outputs=unmap_outputs)
-        '''
-        (all_anchors, all_labels, all_label_weights, all_bbox_targets,
-         all_bbox_weights, pos_inds_list, neg_inds_list, all_labels_neg,
-         all_label_weights_neg, all_bbox_targets_neg, all_bbox_weights_neg,
-         pos_inds_list_neg, neg_inds_list_neg, all_assigned_neg,
-         all_assigned_fg) = multi_apply(
+         all_bbox_weights, pos_inds_list, neg_inds_list, all_vlr_region,
+         all_im_region) = multi_apply(
              self._get_target_single,
              anchor_list,
              valid_flag_list,
@@ -519,31 +428,13 @@ class LDHead(GFLHead):
                                              num_level_anchors)
         bbox_weights_list = images_to_levels(all_bbox_weights,
                                              num_level_anchors)
-        assigned_neg_list = images_to_levels(all_assigned_neg,
-                                             num_level_anchors)
-        assigned_fg_list = images_to_levels(all_assigned_fg, num_level_anchors)
+        vlr_regions_list = images_to_levels(all_vlr_region, num_level_anchors)
+        im_regions_list = images_to_levels(all_im_region, num_level_anchors)
         # sampled anchors of all images
-        num_total_pos_neg = sum(
-            [max(inds.numel(), 1) for inds in pos_inds_list_neg])
-        num_total_neg_neg = sum(
-            [max(inds.numel(), 1) for inds in neg_inds_list_neg])
-        # split targets to a list w.r.t. multiple levels
-        labels_list_neg = images_to_levels(all_labels_neg, num_level_anchors)
-        label_weights_list_neg = images_to_levels(all_label_weights_neg,
-                                                  num_level_anchors)
-        bbox_targets_list_neg = images_to_levels(all_bbox_targets_neg,
-                                                 num_level_anchors)
-        bbox_weights_list_neg = images_to_levels(all_bbox_weights_neg,
-                                                 num_level_anchors)
-        #assigned_neg_list = images_to_levels(all_assigned_neg,
-        #num_level_anchors)
 
         return (anchors_list, labels_list, label_weights_list,
                 bbox_targets_list, bbox_weights_list, num_total_pos,
-                num_total_neg, labels_list_neg, label_weights_list_neg,
-                bbox_targets_list_neg, bbox_weights_list_neg,
-                num_total_pos_neg, num_total_neg_neg, assigned_neg_list,
-                assigned_fg_list)
+                num_total_neg, vlr_regions_list, im_regions_list)
 
     def _get_target_single(self,
                            flat_anchors,
@@ -602,31 +493,25 @@ class LDHead(GFLHead):
 
         num_level_anchors_inside = self.get_num_level_anchors_inside(
             num_level_anchors, inside_flags)
-        #assign_result, assigned_neg, assigned_neg_inds = self.assigner.assign(anchors, num_level_anchors_inside,
-        #gt_bboxes, gt_bboxes_ignore,
-        #gt_labels)
-        assign_result = self.assigner.assign_pos(anchors,
-                                                 num_level_anchors_inside,
-                                                 gt_bboxes, gt_bboxes_ignore,
-                                                 gt_labels)
+
+        assign_result = self.assigner.assign(anchors, num_level_anchors_inside,
+                                             gt_bboxes, gt_bboxes_ignore,
+                                             gt_labels)
 
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)
 
-        assign_result_neg, assigned_neg = self.assigner.assign_neg(
-            anchors, num_level_anchors_inside, gt_bboxes, gt_bboxes_ignore,
-            gt_labels)
+        vlr_region = self.assigner.get_vlr_region(anchors,
+                                                  num_level_anchors_inside,
+                                                  gt_bboxes, gt_bboxes_ignore,
+                                                  gt_labels)
 
-        assigned_fg = self.assigner.assign_fg(anchors, gt_bboxes)
-
-        sampling_result_neg = self.sampler.sample(assign_result_neg, anchors,
-                                                  gt_bboxes)
+        im_region = self.get_im_region(
+            anchors, gt_bboxes, mode=self.imitation_method)
 
         num_valid_anchors = anchors.shape[0]
         bbox_targets = torch.zeros_like(anchors)
         bbox_weights = torch.zeros_like(anchors)
-        bbox_targets_neg = torch.zeros_like(anchors)
-        bbox_weights_neg = torch.zeros_like(anchors)
 
         labels = anchors.new_full((num_valid_anchors, ),
                                   self.num_classes,
@@ -636,12 +521,9 @@ class LDHead(GFLHead):
                                       dtype=torch.long)
 
         label_weights = anchors.new_zeros(num_valid_anchors, dtype=torch.float)
-        label_weights_neg = anchors.new_zeros(
-            num_valid_anchors, dtype=torch.float)
+
         pos_inds = sampling_result.pos_inds
         neg_inds = sampling_result.neg_inds
-        pos_inds_neg = sampling_result_neg.pos_inds
-        neg_inds_neg = sampling_result_neg.neg_inds
 
         if len(pos_inds) > 0:
             pos_bbox_targets = sampling_result.pos_gt_bboxes
@@ -662,25 +544,6 @@ class LDHead(GFLHead):
         if len(neg_inds) > 0:
             label_weights[neg_inds] = 1.0
 
-        if len(pos_inds_neg) > 0:
-            pos_bbox_targets_neg = sampling_result_neg.pos_gt_bboxes
-            bbox_targets_neg[pos_inds_neg, :] = pos_bbox_targets_neg
-            bbox_weights_neg[pos_inds_neg, :] = 1.0
-
-            if gt_labels is None:
-                # Only rpn gives gt_labels as None
-                # Foreground is the first class
-                labels_neg[pos_inds_neg] = 0
-            else:
-                labels_neg[pos_inds_neg] = gt_labels[
-                    sampling_result_neg.pos_assigned_gt_inds]
-            if self.train_cfg.pos_weight <= 0:
-                label_weights_neg[pos_inds_neg] = 1.0
-            else:
-                label_weights_neg[pos_inds_neg] = self.train_cfg.pos_weight
-        if len(neg_inds_neg) > 0:
-            label_weights_neg[neg_inds_neg] = 1.0
-
         # map up to original set of anchors
         if unmap_outputs:
             num_total_anchors = flat_anchors.size(0)
@@ -691,22 +554,74 @@ class LDHead(GFLHead):
                                   inside_flags)
             bbox_targets = unmap(bbox_targets, num_total_anchors, inside_flags)
             bbox_weights = unmap(bbox_weights, num_total_anchors, inside_flags)
-            assigned_neg = unmap(assigned_neg, num_total_anchors, inside_flags)
-            assigned_fg = unmap(assigned_fg, num_total_anchors, inside_flags)
+            vlr_region = unmap(vlr_region, num_total_anchors, inside_flags)
+            im_region = unmap(im_region, num_total_anchors, inside_flags)
 
             labels_neg = unmap(
                 labels_neg,
                 num_total_anchors,
                 inside_flags,
                 fill=self.num_classes)
-            label_weights_neg = unmap(label_weights_neg, num_total_anchors,
-                                      inside_flags)
-            bbox_targets_neg = unmap(bbox_targets_neg, num_total_anchors,
-                                     inside_flags)
-            bbox_weights_neg = unmap(bbox_weights_neg, num_total_anchors,
-                                     inside_flags)
 
         return (anchors, labels, label_weights, bbox_targets, bbox_weights,
-                pos_inds, neg_inds, labels_neg, label_weights_neg,
-                bbox_targets_neg, bbox_weights_neg, pos_inds_neg, neg_inds_neg,
-                assigned_neg, assigned_fg)
+                pos_inds, neg_inds, vlr_region, im_region)
+
+    # imitation region
+    def get_im_region(self, bboxes, gt_bboxes, mode='fitnet'):
+        num_gt, num_bboxes = gt_bboxes.size(0), bboxes.size(0)
+
+        # compute iou between all bbox and gt
+
+        overlaps = self.iou_calculator(bboxes, gt_bboxes)
+        bboxes = bboxes[:, :4]
+        assigned_gt_inds = overlaps.new_full((num_bboxes, ),
+                                             0,
+                                             dtype=torch.long)
+        assigned_fg = (assigned_gt_inds + 0).float()
+        # compute iou between all bbox and gt
+
+        iou = self.iou_calculator(bboxes, gt_bboxes, mode='iou')
+        fine_grained = torch.nonzero(iou > 0.5 * iou.max(0)[0])
+        assigned_fg[fine_grained[:, 0]] = 1
+        gt_flag = torch.zeros(bboxes.shape[0])
+        anchor_center = self.anchor_center(bboxes)
+        for gt_bbox in gt_bboxes:
+            in_gt_flag = torch.nonzero(
+                (anchor_center[:, 0] > gt_bbox[0])
+                & (anchor_center[:, 0] < gt_bbox[2])
+                & (anchor_center[:, 1] > gt_bbox[1])
+                & (anchor_center[:, 1] < gt_bbox[3]),
+                as_tuple=False)
+            gt_flag[in_gt_flag] = 1
+
+        if mode == 'finegrained':
+            return assigned_fg
+        else:
+            return gt_flag
+
+    def get_gi_region(self, soft_label, cls_score, anchors, bbox_pred,
+                      soft_targets, stride):
+
+        teacher_score = soft_label.detach().sigmoid()
+
+        student_score = cls_score.detach().sigmoid()  #[num,80]
+
+        anchor_centers = self.anchor_center(anchors) / stride[0]
+        sdistribution = self.integral(bbox_pred)
+        tdistribution = self.integral(soft_targets)
+        sbox = distance2bbox(anchor_centers, sdistribution)  #[num,4]
+        tbox = distance2bbox(anchor_centers, tdistribution)
+
+        z = teacher_score - student_score  #difference between teacher score and student score on the whole locations.
+        giscore, index = torch.abs(z).max(dim=1)  #GI scores
+        k = z >= 0  #who is bigger
+        j = torch.take(
+            k, index + self.cls_out_channels *
+            (torch.arange(student_score.size(0)).cuda()))
+        h = j == 0
+        gibox = sbox.new_zeros(sbox.shape)
+        gibox[j] = tbox[j] + 0
+        gibox[h] = sbox[h] + 0  #GI boxes
+
+        idx_out = torch.ops.torchvision.nms(gibox, giscore, 0.3)[:10]
+        return idx_out

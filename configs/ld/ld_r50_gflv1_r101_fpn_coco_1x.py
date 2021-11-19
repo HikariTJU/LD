@@ -38,12 +38,12 @@ model = dict(
         loss_ld=dict(
             type='KnowledgeDistillationKLDivLoss', loss_weight=0.25, T=10),
         loss_kd=dict(
-            type='KnowledgeDistillationKLDivLoss', loss_weight=5, T=2),
+            type='KnowledgeDistillationKLDivLoss', loss_weight=10, T=2),
         loss_im=dict(type='IMLoss', loss_weight=2.0),
         reg_max=16,
         loss_bbox=dict(type='GIoULoss', loss_weight=2.0)))
 data = dict(
-    samples_per_gpu=3,
+    samples_per_gpu=2,
     workers_per_gpu=2,
 )
-optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
