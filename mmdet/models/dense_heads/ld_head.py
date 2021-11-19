@@ -232,7 +232,7 @@ class LDHead(GFLHead):
                 soft_corners,
                 weight=weight_targets[:, None].expand(-1, 4).reshape(-1),
                 avg_factor=4.0)
-            loss_cls_kd = self.loss_kd(
+            loss_kd = self.loss_kd(
                 cls_score[pos_inds],
                 soft_label[pos_inds],
                 weight=label_weights[pos_inds],
@@ -242,7 +242,7 @@ class LDHead(GFLHead):
             loss_ld = bbox_pred.sum() * 0
             loss_bbox = bbox_pred.sum() * 0
             loss_dfl = bbox_pred.sum() * 0
-            loss_cls_kd = bbox_pred.sum() * 0
+            loss_kd = bbox_pred.sum() * 0
             loss_im = bbox_pred.sum() * 0
             weight_targets = bbox_pred.new_tensor(0)
 
@@ -259,15 +259,21 @@ class LDHead(GFLHead):
                 neg_soft_corners,
                 weight=remain_targets[:, None].expand(-1, 4).reshape(-1),
                 avg_factor=4.0)
+            loss_kd_neg = 0 * self.loss_kd(
+                cls_score[remain_inds],
+                soft_label[remain_inds],
+                weight=label_weights[remain_inds],
+                avg_factor=remain_inds.shape[0])
         else:
             loss_ld_neg = bbox_pred.sum() * 0
+            loss_kd_neg = bbox_pred.sum() * 0
 
         loss_cls = self.loss_cls(
             cls_score, (labels, score),
             weight=label_weights,
             avg_factor=num_total_samples)
 
-        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_neg, loss_cls_kd, loss_im, weight_targets.sum(
+        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_neg, loss_kd, loss_kd_neg, loss_im, weight_targets.sum(
         )
 
     @force_fp32(apply_to=('cls_scores', 'bbox_preds'))
@@ -329,9 +335,7 @@ class LDHead(GFLHead):
                          device=device)).item()
         num_total_samples = max(num_total_samples, 1.0)
 
-
-
-        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_neg, losses_cls_kd, losses_im,\
+        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_neg, losses_kd, losses_kd_neg, losses_im,\
             avg_factor = multi_apply(
                 self.loss_single,
                 anchor_list,
@@ -360,7 +364,8 @@ class LDHead(GFLHead):
             loss_dfl=losses_dfl,
             loss_ld=losses_ld,
             loss_ld_neg=losses_ld_neg,
-            loss_cls_kd=losses_cls_kd,
+            loss_kd=losses_kd,
+            loss_kd_neg=losses_kd_neg,
             loss_im=losses_im,
         )
 
@@ -568,6 +573,7 @@ class LDHead(GFLHead):
 
     # imitation region
     def get_im_region(self, bboxes, gt_bboxes, mode='fitnet'):
+        assert mode in ['gibox', 'finegrained', 'fitnet', 'decouple']
         num_gt, num_bboxes = gt_bboxes.size(0), bboxes.size(0)
 
         # compute iou between all bbox and gt
