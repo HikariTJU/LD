@@ -58,6 +58,15 @@ data = dict(
     samples_per_gpu=2,
 ```
 
+#### Feature Imitation Methods
+
+We provide several feature imitation methods, including FitNets `fitnet`, DeFeat `decouple`, Fine-Grained `finegrain`, GI location `gibox`.
+```python
+    bbox_head=dict(
+        loss_im=dict(type='IMLoss', loss_weight=2.0),
+        imitation_method='finegrained'  # gibox, finegrain, decouple, fitnet
+    )
+```
 ## Convert model
 
 If you find trained model very large, please refer to [publish_model.py](tools/publish_model.py)
