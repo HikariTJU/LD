@@ -78,7 +78,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 <summary>COCO</summary>
  
 - **LD for Lightweight Detectors**
-
+  Evaluate on the main distillation only.
   |  Teacher  | Student | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
   | :-------: | :-----: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: | :--------------: |
   |    --     |  R-18   |        1x         |   35.8   |    53.1    |    38.2    |     36.0      |      53.4       |      38.7       |       55.3       |
@@ -89,9 +89,9 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   |   R-101   |  R-50   |        1x         |   41.1   |    58.7    |    44.9    |     41.2      |      58.8       |      44.7       |       59.8       |
   |    --     |  R-101  |        2x         |   44.6   |    62.9    |    48.4    |     45.0      |      63.6       |      48.9       |       62.3       |
   | R-101-DCN |  R-101  |        2x         |   45.4   |    63.1    |    49.5    |     45.6      |      63.7       |      49.8       |       63.3       |
-
+ 
 - **Self-LD**
-
+  Evaluate on the main distillation only.
   |     Teacher     |     Student     | Training schedule | AP (val) | AP50 (val) | AP75 (val) |
   | :-------------: | :-------------: | :---------------: | :------: | :--------: | :--------: |
   |       --        |      R-18       |        1x         |   35.8   |    53.1    |    38.2    |
@@ -102,7 +102,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   | X-101-32x4d-DCN | X-101-32x4d-DCN |        1x         |   47.5   |    65.8    |    51.8    |
 
 - **Logit Mimicking vs. Feature Imitation**
-
+  **Ours** = Main KD + Main LD + VLR LD.
   | Method | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | APs (val) | APm (val) | APl (val) |
   | :-------: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: |
   |       --        |        1x         |   40.1   |    58.2    |    43.1    |     23.3      |      44.4       |      52.5       |
@@ -122,7 +122,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 <summary>PASCAL VOC</summary>
  
 - **LD for Lightweight Detectors**
-
+  Evaluate on the main distillation only.
   |  Teacher  | Student | Training Epochs  |  AP   | AP50  | AP75  |
   | :-------: | :-----: | :-------------:  | :---: | :---: | :---: |
   |    --     |  R-18   |        4        | 51.8  | 75.8  | 56.3  |
