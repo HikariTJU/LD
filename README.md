@@ -68,14 +68,14 @@ If you find trained model very large, please refer to [publish_model.py](tools/p
 CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py work_dirs/ld_gflv1_r101_r50_fpn_coco_1x/epoch_24.pth
 ```
 
-## COCO Evaluation
+## Evaluation
 
 ```python
 ./tools/dist_test.sh configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py work_dirs/ld_gflv1_r101_r50_fpn_coco_1x/epoch_24.pth 8 --eval bbox
 ```
 
 <details open>
-
+<summary>COCO</summary>
 - **LD for Lightweight Detectors**
 
 |  Teacher  | Student | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
@@ -121,7 +121,9 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 ./tools/dist_test.sh configs/ld/ld_gflv1_r101_r18_fpn_voc.py work_dirs/ld_gflv1_r101_r18_fpn_voc/epoch_4.pth 8 --eval mAP
 ```
 <details open>
-
+ 
+<summary>PASCAL VOC</summary>
+ 
 - **LD for Lightweight Detectors**
 
 |  Teacher  | Student | Training Epochs | Mini-batch size |  AP   | AP50  | AP75  |
