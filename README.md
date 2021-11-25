@@ -115,8 +115,6 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
       **Ours**     |        1x         |   42.1   |    60.3    |    45.6    |     24.5      |      46.2       |      54.8       |
 </details>
 
-## VOC Evaluation
-
 ```python
 ./tools/dist_test.sh configs/ld/ld_gflv1_r101_r18_fpn_voc.py work_dirs/ld_gflv1_r101_r18_fpn_voc/epoch_4.pth 8 --eval mAP
 ```
