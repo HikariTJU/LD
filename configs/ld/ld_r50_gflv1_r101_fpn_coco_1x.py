@@ -37,6 +37,8 @@ model = dict(
         loss_dfl=dict(type='DistributionFocalLoss', loss_weight=0.25),
         loss_ld=dict(
             type='KnowledgeDistillationKLDivLoss', loss_weight=0.25, T=10),
+        loss_ld_vlr=dict(
+            type='KnowledgeDistillationKLDivLoss', loss_weight=0.25, T=10),
         loss_kd=dict(
             type='KnowledgeDistillationKLDivLoss', loss_weight=10, T=2),
         loss_im=dict(type='IMLoss', loss_weight=2.0),

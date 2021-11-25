@@ -29,15 +29,11 @@ from .vfnet_head import VFNetHead
 from .yolact_head import YOLACTHead, YOLACTProtonet, YOLACTSegmHead
 from .yolo_head import YOLOV3Head
 from .gfocal_head import GFocalHead
-from .ldv2_head import LDv2Head
-from .imitation_head import IMHead
 from .imitationv2_head import IMv2Head
 from .ld_retina import LDRetinaHead
 from .ld_fcos_head import LDFCOSHead
 from .ld_atss import LDATSSHead
 from .atss_gfl_head import ATSSGFLHead
-from .rpn_gfl_head import RPNGFLHead
-from .ld_rpn_head import LDRPNHead
 
 __all__ = [
     'AnchorFreeHead', 'AnchorHead', 'GuidedAnchorHead', 'FeatureAdaption',
@@ -48,5 +44,5 @@ __all__ = [
     'YOLACTSegmHead', 'YOLACTProtonet', 'YOLOV3Head', 'PAAHead',
     'SABLRetinaHead', 'CentripetalHead', 'VFNetHead', 'TransformerHead',
     'StageCascadeRPNHead', 'CascadeRPNHead', 'EmbeddingRPNHead', 'LDHead',
-    'GFocalHead', 'LDv2Head', 'IMHead', 'IMv2Head'
+    'GFocalHead', 'IMv2Head'
 ]

@@ -48,7 +48,11 @@ class LDHead(GFLHead):
                  in_channels,
                  loss_im,
                  loss_ld=dict(
-                     type='LocalizationDistillationLoss',
+                     type='KnowledgeDistillationKLDivLoss',
+                     loss_weight=0.25,
+                     T=10),
+                 loss_ld_vlr=dict(
+                     type='KnowledgeDistillationKLDivLoss',
                      loss_weight=0.25,
                      T=10),
                  loss_kd=dict(
@@ -61,6 +65,7 @@ class LDHead(GFLHead):
         self.imitation_method = imitation_method
         self.loss_im = build_loss(loss_im)
         self.loss_ld = build_loss(loss_ld)
+        self.loss_ld_vlr = build_loss(loss_ld_vlr)
         self.loss_kd = build_loss(loss_kd)
         self.iou_calculator = build_iou_calculator(
             dict(type='BboxOverlaps2D'), )
@@ -254,18 +259,18 @@ class LDHead(GFLHead):
 
             remain_targets = vlr_region[remain_inds]
 
-            loss_ld_neg = 0.25 * self.loss_ld(
+            loss_ld_vlr = self.loss_ld_vlr(
                 neg_pred_corners,
                 neg_soft_corners,
                 weight=remain_targets[:, None].expand(-1, 4).reshape(-1),
-                avg_factor=4.0)
+                avg_factor=16.0)
             loss_kd_neg = 0 * self.loss_kd(
                 cls_score[remain_inds],
                 soft_label[remain_inds],
                 weight=label_weights[remain_inds],
                 avg_factor=remain_inds.shape[0])
         else:
-            loss_ld_neg = bbox_pred.sum() * 0
+            loss_ld_vlr = bbox_pred.sum() * 0
             loss_kd_neg = bbox_pred.sum() * 0
 
         loss_cls = self.loss_cls(
@@ -273,7 +278,7 @@ class LDHead(GFLHead):
             weight=label_weights,
             avg_factor=num_total_samples)
 
-        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_neg, loss_kd, loss_kd_neg, loss_im, weight_targets.sum(
+        return loss_cls, loss_bbox, loss_dfl, loss_ld, loss_ld_vlr, loss_kd, loss_kd_neg, loss_im, weight_targets.sum(
         )
 
     @force_fp32(apply_to=('cls_scores', 'bbox_preds'))
@@ -335,7 +340,7 @@ class LDHead(GFLHead):
                          device=device)).item()
         num_total_samples = max(num_total_samples, 1.0)
 
-        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_neg, losses_kd, losses_kd_neg, losses_im,\
+        losses_cls, losses_bbox, losses_dfl, losses_ld, losses_ld_vlr, losses_kd, losses_kd_neg, losses_im,\
             avg_factor = multi_apply(
                 self.loss_single,
                 anchor_list,
@@ -363,7 +368,7 @@ class LDHead(GFLHead):
             loss_bbox=losses_bbox,
             loss_dfl=losses_dfl,
             loss_ld=losses_ld,
-            loss_ld_neg=losses_ld_neg,
+            loss_ld_vlr=losses_ld_vlr,
             loss_kd=losses_kd,
             loss_kd_neg=losses_kd_neg,
             loss_im=losses_im,
