@@ -79,7 +79,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **LD for Lightweight Detectors**
  
-  Evaluate on the main distillation only.
+  Evaluate on the main distillation region only.
   |  Teacher  | Student | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
   | :-------: | :-----: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: | :--------------: |
   |    --     |  R-18   |        1x         |   35.8   |    53.1    |    38.2    |     36.0      |      53.4       |      38.7       |       55.3       |
@@ -93,7 +93,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **Self-LD**
  
-  Evaluate on the main distillation only.
+  Evaluate on the main distillation region only.
   |     Teacher     |     Student     | Training schedule | AP (val) | AP50 (val) | AP75 (val) |
   | :-------------: | :-------------: | :---------------: | :------: | :--------: | :--------: |
   |       --        |      R-18       |        1x         |   35.8   |    53.1    |    38.2    |
@@ -105,7 +105,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 - **Logit Mimicking vs. Feature Imitation**
  
-  **Ours** = Main KD + Main LD + VLR LD.
+  **Ours** = Main KD + Main LD + VLR LD. ''Main'' denotes the main distillation region, ''VLR'' denotes the valuable localization region.
   | Method | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | APs (val) | APm (val) | APl (val) |
   | :-------: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: |
   |       --        |        1x         |   40.1   |    58.2    |    43.1    |     23.3      |      44.4       |      52.5       |
@@ -126,7 +126,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **LD for Lightweight Detectors**
  
-  Evaluate on the main distillation only.
+  Evaluate on the main distillation region only.
   |  Teacher  | Student | Training Epochs  |  AP   | AP50  | AP75  |
   | :-------: | :-----: | :-------------:  | :---: | :---: | :---: |
   |    --     |  R-18   |        4        | 51.8  | 75.8  | 56.3  |
