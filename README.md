@@ -112,7 +112,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   |   Fine-Grained  |        1x         |   41.1   |    58.8    |    44.8    |     23.3      |      45.4       |      53.1       |
   |      DeFeat     |        1x         |   40.8   |    58.6    |    44.2    |     24.3      |      44.6       |      53.7       |
   |   GI Imitation  |        1x         |   41.5   |    59.6    |    45.2    |     24.3      |      45.7       |      53.6       |
-      **Ours**     |        1x         |   42.1   |    60.3    |    45.6    |     24.5      |      46.2       |      54.8       |
+  |    **Ours**     |        1x         |   42.1   |    60.3    |    45.6    |     24.5      |      46.2       |      54.8       |
 </details>
 
 ```python
