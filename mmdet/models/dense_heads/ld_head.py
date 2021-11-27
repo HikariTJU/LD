@@ -46,7 +46,6 @@ class LDHead(GFLHead):
     def __init__(self,
                  num_classes,
                  in_channels,
-                 loss_im,
                  loss_ld=dict(
                      type='KnowledgeDistillationKLDivLoss',
                      loss_weight=0.25,
@@ -57,8 +56,9 @@ class LDHead(GFLHead):
                      T=10),
                  loss_kd=dict(
                      type='KnowledgeDistillationKLDivLoss',
-                     loss_weight=0.5,
-                     T=10),
+                     loss_weight=10,
+                     T=2),
+                 loss_im=dict(type='IMLoss', loss_weight=2.0),
                  imitation_method='gibox',
                  **kwargs):
         super(LDHead, self).__init__(num_classes, in_channels, **kwargs)

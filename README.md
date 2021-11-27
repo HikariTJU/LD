@@ -35,7 +35,7 @@ Please see [GETTING_STARTED.md](docs/getting_started.md) for the basic usage of 
 # and you have activated your virtual environment if needed.
 # and with COCO dataset in 'data/coco/'
 
-./tools/dist_train.sh configs/ld/ld_gflv1_r101_r50_fpn_coco_1x.py 8
+./tools/dist_train.sh configs/ld/ld_r50_gflv1_r101_fpn_coco_1x.py 8
 ```
 
 #### Learning rate setting
