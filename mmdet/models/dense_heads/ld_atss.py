@@ -218,10 +218,8 @@ class LDATSSHead(ATSSGFLHead):
             return None
 
         (anchor_list, labels_list, label_weights_list, bbox_targets_list,
-         bbox_weights_list, num_total_pos, num_total_neg, labels_list_neg,
-         label_weights_list_neg, bbox_targets_list_neg, bbox_weights_list_neg,
-         num_total_pos_neg, num_total_neg_neg,
-         assigned_neg_list) = cls_reg_targets
+         bbox_weights_list, num_total_pos, num_total_neg, assigned_neg_list,
+         im_region_list) = cls_reg_targets
 
         num_total_samples = reduce_mean(
             torch.tensor(num_total_pos, dtype=torch.float,
@@ -332,24 +330,10 @@ class LDATSSHead(ATSSGFLHead):
             gt_bboxes_ignore_list = [None for _ in range(num_imgs)]
         if gt_labels_list is None:
             gt_labels_list = [None for _ in range(num_imgs)]
-        '''
+
         (all_anchors, all_labels, all_label_weights, all_bbox_targets,
-         all_bbox_weights, pos_inds_list, neg_inds_list, all_assigned_neg, assigned_neg_inds_list) = multi_apply(
-             self._get_target_single,
-             anchor_list,
-             valid_flag_list,
-             num_level_anchors_list,
-             gt_bboxes_list,
-             gt_bboxes_ignore_list,
-             gt_labels_list,
-             img_metas,
-             label_channels=label_channels,
-             unmap_outputs=unmap_outputs)
-        '''
-        (all_anchors, all_labels, all_label_weights, all_bbox_targets,
-         all_bbox_weights, pos_inds_list, neg_inds_list, all_labels_neg,
-         all_label_weights_neg, all_bbox_targets_neg, all_bbox_weights_neg,
-         pos_inds_list_neg, neg_inds_list_neg, all_assigned_neg) = multi_apply(
+         all_bbox_weights, pos_inds_list, neg_inds_list, all_vlr_region,
+         all_im_region) = multi_apply(
              self._get_target_single,
              anchor_list,
              valid_flag_list,
@@ -367,6 +351,7 @@ class LDATSSHead(ATSSGFLHead):
         # sampled anchors of all images
         num_total_pos = sum([max(inds.numel(), 1) for inds in pos_inds_list])
         num_total_neg = sum([max(inds.numel(), 1) for inds in neg_inds_list])
+        #num_total_remain_neg = sum([max(inds.numel(), 1) for inds in assigned_neg_inds_list])
         # split targets to a list w.r.t. multiple levels
         anchors_list = images_to_levels(all_anchors, num_level_anchors)
         labels_list = images_to_levels(all_labels, num_level_anchors)
@@ -376,28 +361,13 @@ class LDATSSHead(ATSSGFLHead):
                                              num_level_anchors)
         bbox_weights_list = images_to_levels(all_bbox_weights,
                                              num_level_anchors)
-        assigned_neg_list = images_to_levels(all_assigned_neg,
-                                             num_level_anchors)
-
+        vlr_regions_list = images_to_levels(all_vlr_region, num_level_anchors)
+        im_regions_list = images_to_levels(all_im_region, num_level_anchors)
         # sampled anchors of all images
-        num_total_pos_neg = sum(
-            [max(inds.numel(), 1) for inds in pos_inds_list_neg])
-        num_total_neg_neg = sum(
-            [max(inds.numel(), 1) for inds in neg_inds_list_neg])
-        # split targets to a list w.r.t. multiple levels
-        labels_list_neg = images_to_levels(all_labels_neg, num_level_anchors)
-        label_weights_list_neg = images_to_levels(all_label_weights_neg,
-                                                  num_level_anchors)
-        bbox_targets_list_neg = images_to_levels(all_bbox_targets_neg,
-                                                 num_level_anchors)
-        bbox_weights_list_neg = images_to_levels(all_bbox_weights_neg,
-                                                 num_level_anchors)
 
         return (anchors_list, labels_list, label_weights_list,
                 bbox_targets_list, bbox_weights_list, num_total_pos,
-                num_total_neg, labels_list_neg, label_weights_list_neg,
-                bbox_targets_list_neg, bbox_weights_list_neg,
-                num_total_pos_neg, num_total_neg_neg, assigned_neg_list)
+                num_total_neg, vlr_regions_list, im_regions_list)
 
     def _get_target_single(self,
                            flat_anchors,
@@ -464,18 +434,16 @@ class LDATSSHead(ATSSGFLHead):
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)
 
-        assign_result_neg, assigned_neg = self.assigner.get_vlr_region(
-            anchors, num_level_anchors_inside, gt_bboxes, gt_bboxes_ignore,
-            gt_labels)
+        vlr_region = self.assigner.get_vlr_region(anchors,
+                                                  num_level_anchors_inside,
+                                                  gt_bboxes, gt_bboxes_ignore,
+                                                  gt_labels)
 
-        sampling_result_neg = self.sampler.sample(assign_result_neg, anchors,
-                                                  gt_bboxes)
+        im_region = vlr_region
 
         num_valid_anchors = anchors.shape[0]
         bbox_targets = torch.zeros_like(anchors)
         bbox_weights = torch.zeros_like(anchors)
-        bbox_targets_neg = torch.zeros_like(anchors)
-        bbox_weights_neg = torch.zeros_like(anchors)
 
         labels = anchors.new_full((num_valid_anchors, ),
                                   self.num_classes,
@@ -485,12 +453,9 @@ class LDATSSHead(ATSSGFLHead):
                                       dtype=torch.long)
 
         label_weights = anchors.new_zeros(num_valid_anchors, dtype=torch.float)
-        label_weights_neg = anchors.new_zeros(
-            num_valid_anchors, dtype=torch.float)
+
         pos_inds = sampling_result.pos_inds
         neg_inds = sampling_result.neg_inds
-        pos_inds_neg = sampling_result_neg.pos_inds
-        neg_inds_neg = sampling_result_neg.neg_inds
 
         if len(pos_inds) > 0:
             pos_bbox_targets = sampling_result.pos_gt_bboxes
@@ -511,25 +476,6 @@ class LDATSSHead(ATSSGFLHead):
         if len(neg_inds) > 0:
             label_weights[neg_inds] = 1.0
 
-        if len(pos_inds_neg) > 0:
-            pos_bbox_targets_neg = sampling_result_neg.pos_gt_bboxes
-            bbox_targets_neg[pos_inds_neg, :] = pos_bbox_targets_neg
-            bbox_weights_neg[pos_inds_neg, :] = 1.0
-
-            if gt_labels is None:
-                # Only rpn gives gt_labels as None
-                # Foreground is the first class
-                labels_neg[pos_inds_neg] = 0
-            else:
-                labels_neg[pos_inds_neg] = gt_labels[
-                    sampling_result_neg.pos_assigned_gt_inds]
-            if self.train_cfg.pos_weight <= 0:
-                label_weights_neg[pos_inds_neg] = 1.0
-            else:
-                label_weights_neg[pos_inds_neg] = self.train_cfg.pos_weight
-        if len(neg_inds_neg) > 0:
-            label_weights_neg[neg_inds_neg] = 1.0
-
         # map up to original set of anchors
         if unmap_outputs:
             num_total_anchors = flat_anchors.size(0)
@@ -540,21 +486,14 @@ class LDATSSHead(ATSSGFLHead):
                                   inside_flags)
             bbox_targets = unmap(bbox_targets, num_total_anchors, inside_flags)
             bbox_weights = unmap(bbox_weights, num_total_anchors, inside_flags)
-            assigned_neg = unmap(assigned_neg, num_total_anchors, inside_flags)
+            vlr_region = unmap(vlr_region, num_total_anchors, inside_flags)
+            im_region = unmap(im_region, num_total_anchors, inside_flags)
 
             labels_neg = unmap(
                 labels_neg,
                 num_total_anchors,
                 inside_flags,
                 fill=self.num_classes)
-            label_weights_neg = unmap(label_weights_neg, num_total_anchors,
-                                      inside_flags)
-            bbox_targets_neg = unmap(bbox_targets_neg, num_total_anchors,
-                                     inside_flags)
-            bbox_weights_neg = unmap(bbox_weights_neg, num_total_anchors,
-                                     inside_flags)
 
         return (anchors, labels, label_weights, bbox_targets, bbox_weights,
-                pos_inds, neg_inds, labels_neg, label_weights_neg,
-                bbox_targets_neg, bbox_weights_neg, pos_inds_neg, neg_inds_neg,
-                assigned_neg)
+                pos_inds, neg_inds, vlr_region, im_region)
