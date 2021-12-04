@@ -464,7 +464,7 @@ class LDATSSHead(ATSSGFLHead):
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)
 
-        assign_result_neg, assigned_neg = self.assigner.assign_neg(
+        assign_result_neg, assigned_neg = self.assigner.get_vlr_region(
             anchors, num_level_anchors_inside, gt_bboxes, gt_bboxes_ignore,
             gt_labels)
 

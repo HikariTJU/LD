@@ -7,6 +7,7 @@ model = dict(
     type='KnowledgeDistillationSingleStageDetector',
     pretrained='torchvision://resnet50',
     teacher_config='configs/gfl/retinagfl_r101_2x_coco.py',
+    # train your own atss model and modify the filename
     teacher_ckpt='retina_r101_2x-9233f43c.pth',
     backbone=dict(
         type='ResNet',

@@ -2,6 +2,7 @@ model = dict(
     type='KnowledgeDistillationSingleStageDetector',
     pretrained='open-mmlab://detectron2/resnet50_caffe',
     teacher_config='configs/gfl/fcos_gfl_r101_2x_center.py',
+    # train your own atss model and modify the filename
     teacher_ckpt='fcos_r101_2x-2a6e5cd4.pth',
     backbone=dict(
         type='ResNet',
