@@ -69,7 +69,7 @@ We provide several feature imitation methods, including FitNets `fitnet`, DeFeat
 ```
 ## Convert model
 
-If you find trained model very large, please refer to [publish_model.py](tools/publish_model.py)
+If you find trained model very large, please refer to [publish_model.py](tools/model_converters/publish_model.py)
 
 ## Speed Test (FPS)
 
