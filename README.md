@@ -189,7 +189,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  - For more experimental details, please refer to [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
 
 ## Pretrained weights
-#### VOC 07+12
+
 | VOC 07+12 | |
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
 | Main LD only| |
@@ -198,7 +198,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 | [GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | |
 | Main LD + VLR LD + VLR KD, box AP = 54.0 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) | Main LD + VLR LD + VLR KD + GI imitation, box AP = 54.4 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) |
 
-#### COCO
+| COCO | |
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
 | Main LD only| |
 |   [GFocalV1 + LD R101_R18_1x pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d | [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
