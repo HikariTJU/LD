@@ -193,20 +193,17 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 #### VOC 07+12
 | GFocal V1 | |
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
-|   [teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | [teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra  |   
-|   [mainLD, R101→R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 | [mainLD, R101DCN→R34 pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw  | 
-| [mainLD R101DCN→R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | |
+|   teacher R101 [pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | teacher R101DCN [pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra  |   
+|   Main LD R101→R18, box AP = 53.0 [pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 | Main LD R101DCN→R34, box AP = 56.5 [pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw  | 
+| Main LD R101DCN→R101, box AP = 58.4 [pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | |
 | Main LD + VLR LD + VLR KD R101→R18, box AP = 54.0 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) | Main LD + VLR LD + VLR KD + GI imitation R101→R18, box AP = 54.4 [GoogleDrive](https://drive.google.com/file/d/1hMgJs5rCN-PwyLlfU_GP3w-b4UX4_8UP/view?usp=sharing) |
 
-| COCO | |
+#### COCO
+| GFocal V1 | |
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
-| Main LD only| |
-|   [GFocalV1 + LD R101_R18_1x pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d | [GFocalV1 + LD R101_R50_1x pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
-| [GFocalV2 + LD R101_R50_2x pan.baidu](https://pan.baidu.com/s/1WA8KLmz-_aWp07Rqw50qXg) pw: 3jtq  | [GFocalV2 + LD R101DCN_R101_2x pan.baidu](https://pan.baidu.com/s/1DG-cv1Ee6upaJjMxj69ilA) pw: zezq |
-| [GFocalV2 + LD R2N_R101DCN_2x pan.baidu](https://pan.baidu.com/s/18P_Ag-B0Xx5r9hnvJXhZAg) pw: fsbm | [GFocalV2 + LD R2N_X101_2x pan.baidu](https://pan.baidu.com/s/13aaygtqkWzXRgyS58kX1kA) pw: 9vcc |
-| [GFocalV2 + Self-LD R2N_R2N_2x pan.baidu](https://pan.baidu.com/s/1sutJSTbtr9sP67ZdsD2uDQ) pw: 9azn |  |
+|  Main LD R101→R18 1x, box AP = 36.5 [pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d | Main LD R101→R50 1x, box AP = 41.1 [pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
+| Main KD + Main LD + VLR LD R101→R18 1x, box AP = 37.5 [GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) | Main KD + Main LD + VLR LD R101→R34 1x, box AP = 41.0 [GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) |
 | Main KD + Main LD + VLR LD, box AP = 42.1 [GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) | Main KD + Main LD + VLR LD + GI imitation, box AP = 42.4 [GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) |
-
 
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
