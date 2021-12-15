@@ -196,7 +196,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 |   [GFocalV1 teacher R101 pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | [GFocalV1 teacher R101DCN pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra  |   
 |   [GFocalV1 + LD R101_R18 pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 | [GFocalV1 + LD R101DCN_R34 pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw  | 
 | [GFocalV1 + LD R101DCN_R101 pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | |
-| Main LD + VLR LD + VLR KD, box AP = 54.0 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) | Main LD + VLR LD + VLR KD + GI imitation, box AP = 54.4 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) |
+| Main LD + VLR LD + VLR KD, box AP = 54.0 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) | Main LD + VLR LD + VLR KD + GI imitation, box AP = 54.4 [GoogleDrive](https://drive.google.com/file/d/1hMgJs5rCN-PwyLlfU_GP3w-b4UX4_8UP/view?usp=sharing) |
 
 | COCO | |
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
