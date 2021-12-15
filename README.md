@@ -203,7 +203,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 | :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
 |  Main LD R101→R18 1x, box AP = 36.5 [pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d | Main LD R101→R50 1x, box AP = 41.1 [pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
 | Main KD + Main LD + VLR LD R101→R18 1x, box AP = 37.5 [GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) | Main KD + Main LD + VLR LD R101→R34 1x, box AP = 41.0 [GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) |
-| Main KD + Main LD + VLR LD, box AP = 42.1 [GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) | Main KD + Main LD + VLR LD + GI imitation, box AP = 42.4 [GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) |
+| Main KD + Main LD + VLR LD R101→R50, box AP = 42.1 [GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) | Main KD + Main LD + VLR LD + GI imitation R101→R50, box AP = 42.4 [GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) |
 
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
