@@ -218,10 +218,17 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 [GoogleDrive](https://drive.google.com/file/d/100otwiOF2w7iO18t4ACxGmABOYHvhSLG/view?usp=sharing) Main KD + Main LD + VLR LD R101→R34 1x, box AP = 41.0
 
-[GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) Main KD + Main LD + VLR LD R101→R50, box AP = 42.1
+[GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) Main KD + Main LD + VLR LD R101→R50 1x, box AP = 42.1
 
 [GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) Main KD + Main LD + VLR LD + GI imitation R101→R50, box AP = 42.4
 
+##### GFocal V2
+
+[GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) Main KD + Main LD + VLR LD R101→R50 1x, box AP = 42.7
+
+[GoogleDrive](https://drive.google.com/file/d/1n4rFLacovKm6PbhKK1QTBJK2scmqvmOl/view?usp=sharing) | [log]((https://drive.google.com/file/d/1n4rFLacovKm6PbhKK1QTBJK2scmqvmOl/view?usp=sharing)) Main KD + Main LD + VLR LD R101-DCN→R101 2x, box AP (test-dev) = 47.1
+
+[GoogleDrive](https://drive.google.com/file/d/1_Y6Mm_SlaBgY1oSyz8Vaobl7tmMyOJQ9/view?usp=sharing) | [log](https://drive.google.com/file/d/1I8Fmor_t0YhV9txwDLbuLUYODoowjdmm/view?usp=sharing) Main KD + Main LD + VLR LD Res2Net101-DCN→X101-32x4d-DCN 2x, box AP (test-dev) = 50.5
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
 ## Score voting Cluster-DIoU-NMS
