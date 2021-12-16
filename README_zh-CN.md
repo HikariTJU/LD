@@ -191,7 +191,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   ```
 </details>
  
-#### Note:
+#### 注:
  - 更多的实验细节可参阅[GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection).
 
 ## 预训练权重
