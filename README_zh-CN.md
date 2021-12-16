@@ -98,7 +98,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **LD for Lightweight Detectors**
  
-  Evaluate on the main distillation region only.
+   只使用了主蒸馏区域。
   |  Teacher  | Student | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | AP (test-dev) | AP50 (test-dev) | AP75 (test-dev) | AR100 (test-dev) |
   | :-------: | :-----: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: | :--------------: |
   |    --     |  R-18   |        1x         |   35.8   |    53.1    |    38.2    |     36.0      |      53.4       |      38.7       |       55.3       |
@@ -112,7 +112,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **Self-LD**
  
-  Evaluate on the main distillation region only.
+  只使用了主蒸馏区域。
   |     Teacher     |     Student     | Training schedule | AP (val) | AP50 (val) | AP75 (val) |
   | :-------------: | :-------------: | :---------------: | :------: | :--------: | :--------: |
   |       --        |      R-18       |        1x         |   35.8   |    53.1    |    38.2    |
@@ -124,7 +124,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 - **Logit Mimicking vs. Feature Imitation**
  
-  **Ours** = Main KD + Main LD + VLR LD. ''Main'' denotes the main distillation region, ''VLR'' denotes the valuable localization region.
+  **Ours** = Main KD + Main LD + VLR LD. ''Main''表示主蒸馏区域, ''VLR''表示有价值定位区域.
   | Method | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | APs (val) | APm (val) | APl (val) |
   | :-------: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: |
   |       --        |        1x         |   40.1   |    58.2    |    43.1    |     23.3      |      44.4       |      52.5       |
@@ -145,7 +145,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
  
 - **LD for Lightweight Detectors**
  
-  Evaluate on the main distillation region only.
+  只使用了主蒸馏区域。
   |  Teacher  | Student | Training Epochs  |  AP   | AP50  | AP75  |
   | :-------: | :-----: | :-------------:  | :---: | :---: | :---: |
   |    --     |  R-18   |        4        | 51.8  | 75.8  | 56.3  |
@@ -157,7 +157,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   |    --     |  R-101  |        4        | 57.6  | 80.4  | 62.7  |
   | R-101-DCN |  R-101  |        4        | 58.4  | 80.2  | 63.7  |
 
-  This is an example of evaluation results (R-101→R-18).
+  以下是评估结果的一个示例 (R-101→R-18).
   ```
   +-------------+------+-------+--------+-------+
   | class       | gts  | dets  | recall | ap    |
