@@ -48,7 +48,7 @@ LD可稳定提高密集检测器约2.0 AP，几乎无附加计算消耗！
 
 `lr=(samples_per_gpu * num_gpu) / 16 * 0.01`
 
-对于使用2块GPUS，mini-batch大小为6张图，你应修改config文件如下:
+对于使用2块GPU，mini-batch大小为6张图，你应修改config文件如下:
 
 ```python
 optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
@@ -56,7 +56,7 @@ data = dict(
     samples_per_gpu=3,
 ```
 
-对于使用8块GPUS，mini-batch大小为16张图，你应修改config文件如下:
+对于使用8块GPU，mini-batch大小为16张图，你应修改config文件如下:
 
 ```python
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
