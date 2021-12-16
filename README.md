@@ -191,19 +191,25 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 ## Pretrained weights
 
 #### VOC 07+12
-| GFocal V1 | |
-| :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
-|   teacher R101 [pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8 | teacher R101DCN [pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra  |   
-|   Main LD R101→R18, box AP = 53.0 [pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3 | Main LD R101DCN→R34, box AP = 56.5 [pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw  | 
-| Main LD R101DCN→R101, box AP = 58.4 [pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t | |
-| Main LD + VLR LD + VLR KD R101→R18, box AP = 54.0 [GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) | Main LD + VLR LD + VLR KD + GI imitation R101→R18, box AP = 54.4 [GoogleDrive](https://drive.google.com/file/d/1hMgJs5rCN-PwyLlfU_GP3w-b4UX4_8UP/view?usp=sharing) |
+##### GFocal V1 
+
+[pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8, teacher R101  
+[pan.baidu](https://pan.baidu.com/s/1PseEYuQG_WTCSuqoMSIcYQ) pw: 5qra, teacher R101DCN     
+[pan.baidu](https://pan.baidu.com/s/1Jd1UjfuxLi8MGD1JKruWxw) pw: 1bd3, Main LD R101→R18, box AP = 53.0
+[pan.baidu](https://pan.baidu.com/s/13QWRpSEvgPx_Y7_06iuBEQ) pw: thuw, Main LD R101DCN→R34, box AP = 56.5 
+[pan.baidu](https://pan.baidu.com/s/10IZRaFc1FfqoSAmr7iJPcg) pw: mp8t, Main LD R101DCN→R101, box AP = 58.4
+[GoogleDrive](https://drive.google.com/file/d/1RoHEnCiGkCve_g9Fi5DBBjOmScX1CrXI/view?usp=sharing) Main LD + VLR LD + VLR KD R101→R18, box AP = 54.0 
+[GoogleDrive](https://drive.google.com/file/d/1hMgJs5rCN-PwyLlfU_GP3w-b4UX4_8UP/view?usp=sharing) Main LD + VLR LD + VLR KD + GI imitation R101→R18, box AP = 54.4
 
 #### COCO
-| GFocal V1 | |
-| :----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------: |
-|  Main LD R101→R18 1x, box AP = 36.5 [pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d | Main LD R101→R50 1x, box AP = 41.1 [pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz |
-| Main KD + Main LD + VLR LD R101→R18 1x, box AP = 37.5 [GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) | Main KD + Main LD + VLR LD R101→R34 1x, box AP = 41.0 [GoogleDrive](https://drive.google.com/file/d/100otwiOF2w7iO18t4ACxGmABOYHvhSLG/view?usp=sharing) |
-| Main KD + Main LD + VLR LD R101→R50, box AP = 42.1 [GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) | Main KD + Main LD + VLR LD + GI imitation R101→R50, box AP = 42.4 [GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) |
+##### GFocal V1 
+
+[pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d, Main LD R101→R18 1x, box AP = 36.5
+[pan.baidu](https://pan.baidu.com/s/16OLOcPBqgEf8Mh3ljOKPVA) pw: bvzz, Main LD R101→R50 1x, box AP = 41.1
+[GoogleDrive](https://drive.google.com/file/d/1gBnE0MsfxsXfSZHLF6LGdL-I-tcOVdeU/view?usp=sharing) Main KD + Main LD + VLR LD R101→R18 1x, box AP = 37.5
+[GoogleDrive](https://drive.google.com/file/d/100otwiOF2w7iO18t4ACxGmABOYHvhSLG/view?usp=sharing) Main KD + Main LD + VLR LD R101→R34 1x, box AP = 41.0
+[GoogleDrive](https://drive.google.com/file/d/1MPSuJ3TpM5mJk1m4cFjJpKVQOeTU12nP/view?usp=sharing) Main KD + Main LD + VLR LD R101→R50, box AP = 42.1
+[GoogleDrive](https://drive.google.com/file/d/1ryn5bYEf5yx1UXVHQ3iUucnecarM8T3m/view?usp=sharing) Main KD + Main LD + VLR LD + GI imitation R101→R50, box AP = 42.4
 
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
