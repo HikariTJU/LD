@@ -192,7 +192,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 ## Pretrained weights
 
-#### VOC 07+12
+### VOC 07+12
 ##### GFocal V1 
 
 [pan.baidu](https://pan.baidu.com/s/16s-ae8GyWNZFPO_vyGqmUA) pw: ufc8, teacher R101
@@ -209,7 +209,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 [GoogleDrive](https://drive.google.com/file/d/1hMgJs5rCN-PwyLlfU_GP3w-b4UX4_8UP/view?usp=sharing) Main LD + VLR LD + VLR KD + GI imitation R101→R18, box AP = 54.4
 
-#### COCO
+### COCO
 ##### GFocal V1 
 
 [pan.baidu](https://pan.baidu.com/s/1C34l6cMf5f1AViKGYXmeKw) pw: hj8d, Main LD R101→R18 1x, box AP = 36.5
