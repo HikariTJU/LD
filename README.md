@@ -1,6 +1,6 @@
 # Localization Distillation for Dense Object Detection 
 
-English | [简体中文](README_zh-CN.md)
+### English | [简体中文](README_zh-CN.md)
 
 ### This repo is based on mmDetection.
 
