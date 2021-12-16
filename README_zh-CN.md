@@ -239,7 +239,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 ## Score voting Cluster-DIoU-NMS
 我们提供了Score voting [Cluster-DIoU-NMS](https://github.com/Zzh-tju/CIoU), 这是一种加速版的score voting NMS, 并且与DIoU-NMS相结合。
-对于GFocalV1与GFocalV2, Score voting Cluster-DIoU-NMS可带来0.1-0.3 AP提升, 0.2-0.5 AP75提升, <=0.4 AP50下降, 以及<=1.5 FPS下降。相关config文件改动如下:
+对于GFocalV1与GFocalV2, Score voting Cluster-DIoU-NMS可带来0.1-0.3 AP提升, 0.2-0.5 AP75提升, 以及<=0.4 AP50下降。相关config文件改动如下:
 
 ```
 # Score voting Cluster-DIoU-NMS
