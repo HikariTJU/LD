@@ -1,6 +1,6 @@
 # Localization Distillation for Dense Object Detection 
 
-[English](README.md) | 简体中文
+### [English](README.md) | 简体中文
 
 ### 本代码基于mmDetection框架.
 
