@@ -124,7 +124,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 
 - **Logit Mimicking vs. Feature Imitation**
  
-  **Ours** = Main KD + Main LD + VLR LD. ''Main''表示主蒸馏区域, ''VLR''表示有价值定位区域.
+  **Ours** = Main KD + Main LD + VLR LD. ''Main''表示主蒸馏区域, ''VLR''表示有价值定位区域。使用R-101蒸馏R-50。
   | Method | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | APs (val) | APm (val) | APl (val) |
   | :-------: | :---------------:  | :------: | :--------: | :--------: | :-----------: | :-------------: | :-------------: |
   |       --        |        1x         |   40.1   |    58.2    |    43.1    |     23.3      |      44.4       |      52.5       |
