@@ -118,7 +118,7 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
   |       --        | X-101-32x4d-DCN |        1x         |   46.9   |    65.4    |    51.1    |
   | X-101-32x4d-DCN | X-101-32x4d-DCN |        1x         |   47.5   |    65.8    |    51.8    |
 
-- **Logit Mimicking vs. Feature Imitation**
+- **Logit Mimicking vs. Feature Imitation** R101→R50
  
   **Ours** = Main KD + Main LD + VLR LD. ''Main'' denotes the main distillation region, ''VLR'' denotes the valuable localization region.
   | Method | Training schedule  | AP (val) | AP50 (val) | AP75 (val) | APs (val) | APm (val) | APl (val) |
