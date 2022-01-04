@@ -100,7 +100,7 @@ class LDRetinaHead(RetinaGFLHead):
         # assigned_vlr[assigned_vlr > 0] = 1
         vlr_weights = assigned_vlr
         # 剔除正样本
-        neg_weights[labels != self.num_classes] = 0
+        vlr_weights[labels != self.num_classes] = 0
         loss_bbox = self.loss_bbox(
             bbox_pred,
             bbox_targets,
