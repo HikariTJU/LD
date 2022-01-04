@@ -41,7 +41,7 @@ class LDRetinaHead(RetinaGFLHead):
 
     def loss_single(self, cls_score, bbox_pred, anchors, labels, label_weights,
                     bbox_targets, bbox_weights, stride, soft_targets,
-                    soft_labels, assigned_neg, num_total_samples):
+                    soft_labels, assigned_vlr, num_total_samples):
         """Compute loss of a single scale level.
 
         Args:
@@ -70,7 +70,7 @@ class LDRetinaHead(RetinaGFLHead):
         labels = labels.reshape(-1)
 
         label_weights = label_weights.reshape(-1)
-        assigned_neg = assigned_neg.reshape(-1)
+        assigned_vlr = assigned_vlr.reshape(-1)
 
         cls_score = cls_score.permute(0, 2, 3,
                                       1).reshape(-1, self.cls_out_channels)
@@ -97,8 +97,8 @@ class LDRetinaHead(RetinaGFLHead):
             bbox_pred = distance2bbox(anchor_centers, bbox_pred)
         ld_weights = cls_score.detach().sigmoid()
         pos_weights = ld_weights.max(dim=1)[0] * bbox_weights.max(dim=1)[0]
-        # assigned_neg[assigned_neg > 0] = 1
-        neg_weights = assigned_neg
+        # assigned_vlr[assigned_vlr > 0] = 1
+        vlr_weights = assigned_vlr
         # 剔除正样本
         neg_weights[labels != self.num_classes] = 0
         loss_bbox = self.loss_bbox(
@@ -108,8 +108,8 @@ class LDRetinaHead(RetinaGFLHead):
             avg_factor=num_total_samples)
         loss_ld = self.loss_ld(
             bbox_pred_corner, soft_targets, pos_weights, avg_factor=4)
-        loss_ld_neg = 0.03 * self.loss_ld(
-            bbox_pred_corner, soft_targets, neg_weights, avg_factor=4)
+        loss_ld_vlr = 0.03 * self.loss_ld(
+            bbox_pred_corner, soft_targets, vlr_weights, avg_factor=4)
         pos_inds = (bbox_weights.max(dim=1)[0] == 1).nonzero().squeeze(1)
         if len(pos_inds) > 0:
             loss_cls_kd = self.loss_kd(
@@ -132,7 +132,7 @@ class LDRetinaHead(RetinaGFLHead):
         #         avg_factor=1)
         # else:
         # loss_ld_neg = bbox_pred.sum() * 0
-        return loss_cls, loss_bbox, loss_ld, loss_ld_neg, loss_cls_kd
+        return loss_cls, loss_bbox, loss_ld, loss_ld_vlr, loss_cls_kd
 
     def forward_train(self,
                       x,
@@ -223,7 +223,7 @@ class LDRetinaHead(RetinaGFLHead):
         if cls_reg_targets is None:
             return None
         (labels_list, label_weights_list, bbox_targets_list, bbox_weights_list,
-         num_total_pos, num_total_neg, assigned_neg_list) = cls_reg_targets
+         num_total_pos, num_total_neg, assigned_vlr_list) = cls_reg_targets
         num_total_samples = (
             num_total_pos + num_total_neg if self.sampling else num_total_pos)
 
@@ -236,7 +236,7 @@ class LDRetinaHead(RetinaGFLHead):
         all_anchor_list = images_to_levels(concat_anchor_list,
                                            num_level_anchors)
 
-        losses_cls, losses_bbox, loss_ld, loss_ld_neg, loss_cls_kd = multi_apply(
+        losses_cls, losses_bbox, losses_ld, losses_ld_vlr, losses_cls_kd = multi_apply(
             self.loss_single,
             cls_scores,
             bbox_preds,
@@ -248,14 +248,14 @@ class LDRetinaHead(RetinaGFLHead):
             self.anchor_generator.strides,
             soft_targets,
             soft_labels,
-            assigned_neg_list,
+            assigned_vlr_list,
             num_total_samples=num_total_samples)
         return dict(
             loss_cls=losses_cls,
             loss_bbox=losses_bbox,
-            loss_ld=loss_ld,
-            loss_ld_neg=loss_ld_neg,
-            loss_cls_kd=loss_cls_kd)
+            loss_ld=losses_ld,
+            loss_ld_vlr=losses_ld_vlr,
+            loss_cls_kd=losses_cls_kd)
 
     def _get_targets_single(self,
                             flat_anchors,
@@ -314,7 +314,7 @@ class LDRetinaHead(RetinaGFLHead):
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)
 
-        assigned_neg = self.assigner.get_vlr_region(anchors, num_level_anchors_inside,
+        assigned_vlr = self.get_vlr_region(anchors, num_level_anchors_inside,
                                        gt_bboxes)
 
         num_valid_anchors = anchors.shape[0]
@@ -359,10 +359,10 @@ class LDRetinaHead(RetinaGFLHead):
                                   inside_flags)
             bbox_targets = unmap(bbox_targets, num_total_anchors, inside_flags)
             bbox_weights = unmap(bbox_weights, num_total_anchors, inside_flags)
-            assigned_neg = unmap(assigned_neg, num_total_anchors, inside_flags)
+            assigned_vlr = unmap(assigned_vlr, num_total_anchors, inside_flags)
 
         return (labels, label_weights, bbox_targets, bbox_weights, pos_inds,
-                neg_inds, sampling_result, assigned_neg)
+                neg_inds, sampling_result, assigned_vlr)
 
     def get_targets(self,
                     anchor_list,
@@ -445,7 +445,7 @@ class LDRetinaHead(RetinaGFLHead):
             unmap_outputs=unmap_outputs)
         (all_labels, all_label_weights, all_bbox_targets, all_bbox_weights,
          pos_inds_list, neg_inds_list, sampling_results_list,
-         all_assigned_neg) = results[:8]
+         all_assigned_vlr) = results[:8]
         rest_results = list(results[8:])  # user-added return values
         # no valid anchors
         if any([labels is None for labels in all_labels]):
@@ -461,11 +461,11 @@ class LDRetinaHead(RetinaGFLHead):
                                              num_level_anchors)
         bbox_weights_list = images_to_levels(all_bbox_weights,
                                              num_level_anchors)
-        assigned_neg_list = images_to_levels(all_assigned_neg,
+        assigned_vlr_list = images_to_levels(all_assigned_vlr,
                                              num_level_anchors)
         res = (labels_list, label_weights_list, bbox_targets_list,
                bbox_weights_list, num_total_pos, num_total_neg,
-               assigned_neg_list)
+               assigned_vlr_list)
         if return_sampling_results:
             res = res + (sampling_results_list, )
         for i, r in enumerate(rest_results):  # user-added return values
@@ -480,7 +480,7 @@ class LDRetinaHead(RetinaGFLHead):
         ]
         return num_level_anchors_inside
 
-    def assign_neg(
+    def get_vlr_region(
         self,
         bboxes,
         num_level_bboxes,
