@@ -314,7 +314,7 @@ class LDRetinaHead(RetinaGFLHead):
         sampling_result = self.sampler.sample(assign_result, anchors,
                                               gt_bboxes)
 
-        assigned_neg = self.get_vlr_region(anchors, num_level_anchors_inside,
+        assigned_neg = self.assigner.get_vlr_region(anchors, num_level_anchors_inside,
                                        gt_bboxes)
 
         num_valid_anchors = anchors.shape[0]
