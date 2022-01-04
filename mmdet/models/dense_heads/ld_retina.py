@@ -526,7 +526,7 @@ class LDRetinaHead(RetinaGFLHead):
         assigned_gt_inds = overlaps.new_full((num_bboxes, ),
                                              0,
                                              dtype=torch.long)
-        assigned_neg = (assigned_gt_inds + 0).float()
+        assigned_vlr = (assigned_gt_inds + 0).float()
 
         # compute center distance between all bbox and gt
         gt_cx = (gt_bboxes[:, 0] + gt_bboxes[:, 2]) / 2.0
@@ -602,10 +602,10 @@ class LDRetinaHead(RetinaGFLHead):
         assigned_gt_inds[
             max_overlaps != -INF] = argmax_overlaps[max_overlaps != -INF] + 1
 
-        assigned_neg[
+        assigned_vlr[
             max_overlaps != -INF] = max_overlaps[max_overlaps != -INF] + 0
 
-        return assigned_neg
+        return assigned_vlr
 
     def assign_fg(self, bboxes, gt_bboxes):
         num_gt, num_bboxes = gt_bboxes.size(0), bboxes.size(0)
