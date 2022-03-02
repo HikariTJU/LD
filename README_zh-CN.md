@@ -256,10 +256,10 @@ nms=dict(type='nms', iou_threshold=0.6),
 如果你在研究中使用了本项目的代码或者性能基准，请参考如下 bibtex 引用 LD。
 
 ```
-@Article{zheng2021LD,
+@Inproceedings{zheng2021LD,
   title={Localization Distillation for Dense Object Detection},
   author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Mingming},
-  journal={arXiv:2102.12252},
-  year={2021}
+  booktitle={CVPR},
+  year={2022}
 }
 ```
