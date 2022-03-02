@@ -7,6 +7,15 @@
 这是我们论文的代码实现
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
 
+```
+@Inproceedings{zheng2022LD,
+  title={Localization Distillation for Dense Object Detection},
+  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Mingming},
+  booktitle={CVPR},
+  year={2022}
+}
+```
+
 [2021.3.30] LD被集成至[MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), 感谢 [@jshilong
 ](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang)与[@ZwwWayne](https://github.com/ZwwWayne).
 
@@ -249,17 +258,4 @@ nms=dict(type='voting_cluster_diounms', iou_threshold=0.6),
 # Original NMS
 test_cfg = dict(
 nms=dict(type='nms', iou_threshold=0.6),
-```
-
-## 引用
-
-如果你在研究中使用了本项目的代码或者性能基准，请参考如下 bibtex 引用 LD。
-
-```
-@Inproceedings{zheng2022LD,
-  title={Localization Distillation for Dense Object Detection},
-  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Mingming},
-  booktitle={CVPR},
-  year={2022}
-}
 ```
