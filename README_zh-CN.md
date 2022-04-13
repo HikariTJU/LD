@@ -6,7 +6,7 @@
 
 这是我们论文的代码实现
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
-
+ - [Localization Distillation for Object Detection](https://arxiv.org/abs/2204.05957) 期刊拓展
 ```
 @Inproceedings{zheng2022LD,
   title={Localization Distillation for Dense Object Detection},
@@ -14,7 +14,16 @@
   booktitle={CVPR},
   year={2022}
 }
+
+@Article{zheng2022rotatedLD,
+  title={Localization Distillation for Object Detection},
+  author= {Zheng, Zhaohui and Ye, Rongguang and Hou, Qibin and Ren, Dongwei and Wang, Ping and Zuo, Wangmeng and Cheng, Ming-Ming},
+  journal={arXiv preprint arXiv:2204.05957},
+  year={2022}
+}
 ```
+
+[2022.4.13] [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) 已发布，旋转定位蒸馏。
 
 [2021.3.30] LD被集成至[MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), 感谢 [@jshilong
 ](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang)与[@ZwwWayne](https://github.com/ZwwWayne).
