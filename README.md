@@ -6,15 +6,24 @@
 
 This is the code for our paper:
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
-
+ - [Localization Distillation for Object Detection](https://arxiv.org/abs/2204.05957) journal extension.
 ```
 @Inproceedings{zheng2022LD,
   title={Localization Distillation for Dense Object Detection},
-  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Mingming},
+  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Ming-Ming},
   booktitle={CVPR},
   year={2022}
 }
+
+@Article{zheng2022rotatedLD,
+  title={Localization Distillation for Object Detection},
+  author= {Zheng, Zhaohui and Ye, Rongguang and Hou, Qibin and Ren, Dongwei and Wang, Ping and Zuo, Wangmeng and Cheng, Ming-Ming},
+  journal={arXiv preprint arXiv:2204.05957},
+  year={2022}
+}
 ```
+
+[2022.4.13] [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) is now available.
 
 [2021.3.30] LD is officially included in [MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), many thanks to [@jshilong
 ](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang) and [@ZwwWayne](https://github.com/ZwwWayne) for helping migrating the code.
