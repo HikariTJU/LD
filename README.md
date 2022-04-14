@@ -2,6 +2,8 @@
 
 ### English | [简体中文](README_zh-CN.md)
 
+### [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) for rotated object detection is now released.
+
 ### This repo is based on mmDetection.
 
 This is the code for our paper:
