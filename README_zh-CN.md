@@ -2,6 +2,8 @@
 
 ### [English](README.md) | 简体中文
 
+### 针对旋转目标检测器的[Rotated-LD](https://github.com/Zzh-tju/Rotated-LD)已发布。
+
 ### 本代码基于mmDetection框架.
 
 这是我们论文的代码实现
