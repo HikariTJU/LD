@@ -6,6 +6,8 @@
 
 ### This repo is based on mmDetection.
 
+Analysis of LD in ZhiHu: [目标检测-定位蒸馏 (LD, CVPR 2022)](https://zhuanlan.zhihu.com/p/474955539) and [目标检测-定位蒸馏续集——logit蒸馏与feature蒸馏之争](https://zhuanlan.zhihu.com/p/498119752)
+
 This is the code for our paper:
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/2204.05957) journal extension.
