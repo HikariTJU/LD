@@ -6,6 +6,8 @@
 
 ### 本代码基于mmDetection框架.
 
+论文解读: [目标检测-定位蒸馏 (LD, CVPR 2022)](https://zhuanlan.zhihu.com/p/474955539), [目标检测-定位蒸馏续集——logit蒸馏与feature蒸馏之争](https://zhuanlan.zhihu.com/p/498119752)
+
 这是我们论文的代码实现
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/2204.05957) 期刊拓展
