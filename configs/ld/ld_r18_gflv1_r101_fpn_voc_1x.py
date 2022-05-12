@@ -7,6 +7,7 @@ model = dict(
     pretrained='torchvision://resnet18',
     teacher_config='configs/gfl/gfl_r101_fpn_voc.py',
     teacher_ckpt=teacher_ckpt,
+    output_feature=True,
     backbone=dict(
         type='ResNet',
         depth=18,
