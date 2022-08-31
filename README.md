@@ -255,6 +255,16 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 [GoogleDrive](https://drive.google.com/file/d/1_Y6Mm_SlaBgY1oSyz8Vaobl7tmMyOJQ9/view?usp=sharing) &#124; [Training log](https://drive.google.com/file/d/1I8Fmor_t0YhV9txwDLbuLUYODoowjdmm/view?usp=sharing) Main KD + Main LD + VLR LD Res2Net101-DCN→X101-32x4d-DCN 2x, box AP (test-dev) = 50.5
 #### For any other teacher model, you can download at [GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2) and [mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md).
 
+## AP Landscape
+
+If you want to draw AP landscape, please replace the relevant files with the files in `AP_landscape`, and run
+
+```
+# config1 and checkpoint1 correspond to the heads you want to pass through
+
+./tools/dist_test.py config1 config2 checkpoint1 checkpoint2 1
+```
+
 ## Score voting Cluster-DIoU-NMS
 We provide Score voting [Cluster-DIoU-NMS](https://github.com/Zzh-tju/CIoU) which is a speed up version of score voting NMS and combination with DIoU-NMS. For GFocalV1 and GFocalV2, Score voting Cluster-DIoU-NMS will bring 0.1-0.3 AP increase, 0.2-0.5 AP75 increase and <=0.4 AP50 decrease, while it is much faster than score voting NMS in mmdetection. The relevant portion of the config file would be:
 
