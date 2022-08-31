@@ -259,6 +259,16 @@ CUDA_VISIBLE_DEVICES=0 python3 ./tools/benchmark.py configs/ld/ld_gflv1_r101_r50
 [GoogleDrive](https://drive.google.com/file/d/1_Y6Mm_SlaBgY1oSyz8Vaobl7tmMyOJQ9/view?usp=sharing) &#124; [Training log](https://drive.google.com/file/d/1I8Fmor_t0YhV9txwDLbuLUYODoowjdmm/view?usp=sharing) Main KD + Main LD + VLR LD Res2Net101-DCN→X101-32x4d-DCN 2x, box AP (test-dev) = 50.5
 #### 其他的教师模型，可于[GFocalV1](https://github.com/implus/GFocal), [GFocalV2](https://github.com/implus/GFocalV2)以及[mmdetection](https://github.com/open-mmlab/mmdetection/blob/master/configs/gfl/README.md)中下载。
 
+## AP Landscape
+
+如果你想要画AP landscape，请替换相关文件为`AP_landscape`文件夹中的文件，然后运行
+
+```
+# config1 与 checkpoint1 代表你想要推理的head网络，即插值出的新feature将经过此模型的head
+
+./tools/dist_test.py config1 config2 checkpoint1 checkpoint2 1
+```
+
 ## Score voting Cluster-DIoU-NMS
 我们提供了Score voting [Cluster-DIoU-NMS](https://github.com/Zzh-tju/CIoU), 这是一种加速版的score voting NMS, 并且与DIoU-NMS相结合。
 对于GFocalV1与GFocalV2, Score voting Cluster-DIoU-NMS可带来0.1-0.3 AP提升, 0.2-0.5 AP75提升, 以及<=0.4 AP50下降。相关config文件改动如下:
