@@ -63,7 +63,6 @@ Please see [GETTING_STARTED.md](docs/getting_started.md) for the basic usage of 
 ```
 
 #### Learning rate and batch size setting
-*Do not set your samples_per_gpu larger than 3!*
 
 `lr=(samples_per_gpu * num_gpu) / 16 * 0.01`
 
@@ -82,6 +81,7 @@ optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 data = dict(
     samples_per_gpu=2,
 ```
+**Do not set your samples_per_gpu larger than 3!**
 
 #### Feature Imitation Methods
 
