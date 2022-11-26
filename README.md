@@ -81,7 +81,8 @@ optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 data = dict(
     samples_per_gpu=2,
 ```
-**Do not set your samples_per_gpu larger than 3!**
+<font color='red'> Do not set your samples_per_gpu larger than 3! </font>
+
 
 #### Feature Imitation Methods
 
