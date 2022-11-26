@@ -62,7 +62,8 @@ Please see [GETTING_STARTED.md](docs/getting_started.md) for the basic usage of 
 ./tools/dist_train.sh configs/ld/ld_r50_gflv1_r101_fpn_coco_1x.py 8
 ```
 
-#### Learning rate setting
+#### Learning rate and batch size setting
+*Do not set your samples_per_gpu larger than 3!*
 
 `lr=(samples_per_gpu * num_gpu) / 16 * 0.01`
 
