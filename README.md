@@ -2,7 +2,7 @@
 
 ### English | [简体中文](README_zh-CN.md)
 
-### [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) for rotated object detection is now released.
+### [Rotated-LD-mmRotate](https://github.com/Zzh-tju/Rotated-LD) and [Rotated-LD-Jittor](https://github.com/Jittor/JDet/) for rotated object detection is now released. 
 
 ### This repo is based on mmDetection.
 
@@ -26,6 +26,8 @@ This is the code for our paper:
   year={2022}
 }
 ```
+
+[2022.12.3] [Rotated-LD-Jittor](https://github.com/Jittor/JDet/) is now available.
 
 [2022.4.13] [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) is now available.
 
