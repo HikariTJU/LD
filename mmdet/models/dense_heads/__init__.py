@@ -34,6 +34,7 @@ from .ld_retina import LDRetinaHead
 from .ld_fcos_head import LDFCOSHead
 from .ld_atss import LDATSSHead
 from .atss_gfl_head import ATSSGFLHead
+from .ld_gflv2 import LDv2Head
 
 __all__ = [
     'AnchorFreeHead', 'AnchorHead', 'GuidedAnchorHead', 'FeatureAdaption',
