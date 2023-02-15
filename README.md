@@ -29,7 +29,7 @@ This is the code for our paper:
 
 [2022.12.3] [Rotated-LD-Jittor](https://github.com/Jittor/JDet/) is now available.
 
-[2022.4.13] [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) is now available.
+[2022.4.13] [Rotated-LD-mmRotate](https://github.com/Zzh-tju/Rotated-LD) is now available.
 
 [2021.3.30] LD is officially included in [MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), many thanks to [@jshilong
 ](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang) and [@ZwwWayne](https://github.com/ZwwWayne) for helping migrating the code.
