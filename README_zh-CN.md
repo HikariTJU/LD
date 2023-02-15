@@ -27,7 +27,9 @@
 }
 ```
 
-[2022.4.13] [Rotated-LD](https://github.com/Zzh-tju/Rotated-LD) 已发布，旋转定位蒸馏。
+[2022.12.3] [Rotated-LD-Jittor](https://github.com/Jittor/JDet/) 已发布，Jittor版本旋转定位蒸馏。
+
+[2022.4.13] [Rotated-LD-mmRotate](https://github.com/Zzh-tju/Rotated-LD) 已发布，mmRotate版本旋转定位蒸馏。
 
 [2021.3.30] LD被集成至[MMDetection V2](https://github.com/open-mmlab/mmdetection/tree/master/configs/ld), 感谢 [@jshilong
 ](https://github.com/jshilong), [@Johnson-Wang](https://github.com/Johnson-Wang)与[@ZwwWayne](https://github.com/ZwwWayne).
