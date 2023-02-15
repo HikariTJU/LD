@@ -22,8 +22,8 @@
 @Article{zheng2022rotatedLD,
   title={Localization Distillation for Object Detection},
   author= {Zheng, Zhaohui and Ye, Rongguang and Hou, Qibin and Ren, Dongwei and Wang, Ping and Zuo, Wangmeng and Cheng, Ming-Ming},
-  journal={arXiv preprint arXiv:2204.05957},
-  year={2022}
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2023}
 }
 ```
 
