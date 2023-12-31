@@ -12,19 +12,23 @@ This is the code for our paper:
  - [Localization Distillation for Dense Object Detection](https://arxiv.org/abs/2102.12252)
  - [Localization Distillation for Object Detection](https://arxiv.org/abs/2204.05957) journal extension.
 ```
-@Inproceedings{zheng2022LD,
+@Inproceedings{LD,
   title={Localization Distillation for Dense Object Detection},
-  author= {Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Ming-Ming},
-  booktitle={CVPR},
+  author={Zheng, Zhaohui and Ye, Rongguang and Wang, Ping and Ren, Dongwei and Zuo, Wangmeng and Hou, Qibin and Cheng, Ming-Ming},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages={9407--9416},
   year={2022}
 }
 
-@Article{zheng2022rotatedLD,
+@Article{zheng2023rotatedLD,
   title={Localization Distillation for Object Detection},
   author= {Zheng, Zhaohui and Ye, Rongguang and Hou, Qibin and Ren, Dongwei and Wang, Ping and Zuo, Wangmeng and Cheng, Ming-Ming},
   journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
-  year={2023}
-}
+  year={2023},
+  volume={45},
+  number={8},
+  pages={10070-10083},
+  doi={10.1109/TPAMI.2023.3248583}}
 ```
 
 [2022.12.3] [Rotated-LD-Jittor](https://github.com/Jittor/JDet/) is now available.
