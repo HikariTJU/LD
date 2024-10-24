@@ -23,7 +23,9 @@ from .retina_head import RetinaHead
 from .retina_sepbn_head import RetinaSepBNHead
 from .rpn_head import RPNHead
 from .sabl_retina_head import SABLRetinaHead
+from .solo_head import SOLOHead
 from .ssd_head import SSDHead
+from .tood_head import TOODHead
 from .transformer_head import TransformerHead
 from .vfnet_head import VFNetHead
 from .yolact_head import YOLACTHead, YOLACTProtonet, YOLACTSegmHead
@@ -45,5 +47,5 @@ __all__ = [
     'YOLACTSegmHead', 'YOLACTProtonet', 'YOLOV3Head', 'PAAHead',
     'SABLRetinaHead', 'CentripetalHead', 'VFNetHead', 'TransformerHead',
     'StageCascadeRPNHead', 'CascadeRPNHead', 'EmbeddingRPNHead', 'LDHead',
-    'GFocalHead', 'IMv2Head'
+    'GFocalHead', 'IMv2Head', 'SOLOHead', 'TOODHead'
 ]
